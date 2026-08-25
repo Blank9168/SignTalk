@@ -1,0 +1,530 @@
+{
+  "_comment": "Class order for the on-device sign_lstm.tflite classifier -- index in this array = model output index. This is the 105-class FSL-105 model (see ai/dataset/labels_105.json and ai/models/metadata.json in the main SignTalk repo, and the project's signtalk-mini-experiment notes). Do not reorder without re-checking metadata.json's `labels` array, which must match.",
+  "labels": [
+    {
+      "label": "good_morning",
+      "displayName": "Good Morning",
+      "emoji": "🌅"
+    },
+    {
+      "label": "good_afternoon",
+      "displayName": "Good Afternoon",
+      "emoji": "🌤️"
+    },
+    {
+      "label": "good_evening",
+      "displayName": "Good Evening",
+      "emoji": "🌆"
+    },
+    {
+      "label": "hello",
+      "displayName": "Hello",
+      "emoji": "👋"
+    },
+    {
+      "label": "how_are_you",
+      "displayName": "How Are You",
+      "emoji": "🤔"
+    },
+    {
+      "label": "im_fine",
+      "displayName": "I'm Fine",
+      "emoji": "🙂"
+    },
+    {
+      "label": "nice_to_meet_you",
+      "displayName": "Nice To Meet You",
+      "emoji": "🤝"
+    },
+    {
+      "label": "thank_you",
+      "displayName": "Thank You",
+      "emoji": "🙏"
+    },
+    {
+      "label": "youre_welcome",
+      "displayName": "You're Welcome",
+      "emoji": "😊"
+    },
+    {
+      "label": "see_you_tomorrow",
+      "displayName": "See You Tomorrow",
+      "emoji": "👋"
+    },
+    {
+      "label": "understand",
+      "displayName": "Understand",
+      "emoji": "💡"
+    },
+    {
+      "label": "dont_understand",
+      "displayName": "Don't Understand",
+      "emoji": "❓"
+    },
+    {
+      "label": "know",
+      "displayName": "Know",
+      "emoji": "🧠"
+    },
+    {
+      "label": "dont_know",
+      "displayName": "Don't Know",
+      "emoji": "🤷"
+    },
+    {
+      "label": "no",
+      "displayName": "No",
+      "emoji": "❌"
+    },
+    {
+      "label": "yes",
+      "displayName": "Yes",
+      "emoji": "✅"
+    },
+    {
+      "label": "wrong",
+      "displayName": "Wrong",
+      "emoji": "🚫"
+    },
+    {
+      "label": "correct",
+      "displayName": "Correct",
+      "emoji": "✔️"
+    },
+    {
+      "label": "slow",
+      "displayName": "Slow",
+      "emoji": "🐢"
+    },
+    {
+      "label": "fast",
+      "displayName": "Fast",
+      "emoji": "⚡"
+    },
+    {
+      "label": "one",
+      "displayName": "One",
+      "emoji": "1️⃣"
+    },
+    {
+      "label": "two",
+      "displayName": "Two",
+      "emoji": "2️⃣"
+    },
+    {
+      "label": "three",
+      "displayName": "Three",
+      "emoji": "3️⃣"
+    },
+    {
+      "label": "four",
+      "displayName": "Four",
+      "emoji": "4️⃣"
+    },
+    {
+      "label": "five",
+      "displayName": "Five",
+      "emoji": "5️⃣"
+    },
+    {
+      "label": "six",
+      "displayName": "Six",
+      "emoji": "6️⃣"
+    },
+    {
+      "label": "seven",
+      "displayName": "Seven",
+      "emoji": "7️⃣"
+    },
+    {
+      "label": "eight",
+      "displayName": "Eight",
+      "emoji": "8️⃣"
+    },
+    {
+      "label": "nine",
+      "displayName": "Nine",
+      "emoji": "9️⃣"
+    },
+    {
+      "label": "ten",
+      "displayName": "Ten",
+      "emoji": "🔟"
+    },
+    {
+      "label": "january",
+      "displayName": "January",
+      "emoji": "❄️"
+    },
+    {
+      "label": "february",
+      "displayName": "February",
+      "emoji": "💘"
+    },
+    {
+      "label": "march",
+      "displayName": "March",
+      "emoji": "🍀"
+    },
+    {
+      "label": "april",
+      "displayName": "April",
+      "emoji": "🌧️"
+    },
+    {
+      "label": "may",
+      "displayName": "May",
+      "emoji": "🌷"
+    },
+    {
+      "label": "june",
+      "displayName": "June",
+      "emoji": "☀️"
+    },
+    {
+      "label": "july",
+      "displayName": "July",
+      "emoji": "🎆"
+    },
+    {
+      "label": "august",
+      "displayName": "August",
+      "emoji": "🌻"
+    },
+    {
+      "label": "september",
+      "displayName": "September",
+      "emoji": "🍂"
+    },
+    {
+      "label": "october",
+      "displayName": "October",
+      "emoji": "🎃"
+    },
+    {
+      "label": "november",
+      "displayName": "November",
+      "emoji": "🦃"
+    },
+    {
+      "label": "december",
+      "displayName": "December",
+      "emoji": "🎄"
+    },
+    {
+      "label": "monday",
+      "displayName": "Monday",
+      "emoji": "📅"
+    },
+    {
+      "label": "tuesday",
+      "displayName": "Tuesday",
+      "emoji": "📅"
+    },
+    {
+      "label": "wednesday",
+      "displayName": "Wednesday",
+      "emoji": "📅"
+    },
+    {
+      "label": "thursday",
+      "displayName": "Thursday",
+      "emoji": "📅"
+    },
+    {
+      "label": "friday",
+      "displayName": "Friday",
+      "emoji": "📅"
+    },
+    {
+      "label": "saturday",
+      "displayName": "Saturday",
+      "emoji": "📅"
+    },
+    {
+      "label": "sunday",
+      "displayName": "Sunday",
+      "emoji": "📅"
+    },
+    {
+      "label": "today",
+      "displayName": "Today",
+      "emoji": "📆"
+    },
+    {
+      "label": "tomorrow",
+      "displayName": "Tomorrow",
+      "emoji": "➡️"
+    },
+    {
+      "label": "yesterday",
+      "displayName": "Yesterday",
+      "emoji": "⬅️"
+    },
+    {
+      "label": "father",
+      "displayName": "Father",
+      "emoji": "👨"
+    },
+    {
+      "label": "mother",
+      "displayName": "Mother",
+      "emoji": "👩"
+    },
+    {
+      "label": "son",
+      "displayName": "Son",
+      "emoji": "👦"
+    },
+    {
+      "label": "daughter",
+      "displayName": "Daughter",
+      "emoji": "👧"
+    },
+    {
+      "label": "grandfather",
+      "displayName": "Grandfather",
+      "emoji": "👴"
+    },
+    {
+      "label": "grandmother",
+      "displayName": "Grandmother",
+      "emoji": "👵"
+    },
+    {
+      "label": "uncle",
+      "displayName": "Uncle",
+      "emoji": "👨‍🦱"
+    },
+    {
+      "label": "auntie",
+      "displayName": "Auntie",
+      "emoji": "👩‍🦱"
+    },
+    {
+      "label": "cousin",
+      "displayName": "Cousin",
+      "emoji": "🧑"
+    },
+    {
+      "label": "parents",
+      "displayName": "Parents",
+      "emoji": "👪"
+    },
+    {
+      "label": "boy",
+      "displayName": "Boy",
+      "emoji": "👦"
+    },
+    {
+      "label": "girl",
+      "displayName": "Girl",
+      "emoji": "👧"
+    },
+    {
+      "label": "man",
+      "displayName": "Man",
+      "emoji": "👨"
+    },
+    {
+      "label": "woman",
+      "displayName": "Woman",
+      "emoji": "👩"
+    },
+    {
+      "label": "deaf",
+      "displayName": "Deaf",
+      "emoji": "🧏"
+    },
+    {
+      "label": "hard_of_hearing",
+      "displayName": "Hard of Hearing",
+      "emoji": "👂"
+    },
+    {
+      "label": "weelchair_person",
+      "displayName": "Wheelchair Person",
+      "emoji": "♿"
+    },
+    {
+      "label": "blind",
+      "displayName": "Blind",
+      "emoji": "🦯"
+    },
+    {
+      "label": "deaf_blind",
+      "displayName": "Deaf-Blind",
+      "emoji": "🧏‍♂️"
+    },
+    {
+      "label": "married",
+      "displayName": "Married",
+      "emoji": "💍"
+    },
+    {
+      "label": "blue",
+      "displayName": "Blue",
+      "emoji": "🔵"
+    },
+    {
+      "label": "green",
+      "displayName": "Green",
+      "emoji": "🟢"
+    },
+    {
+      "label": "red",
+      "displayName": "Red",
+      "emoji": "🔴"
+    },
+    {
+      "label": "brown",
+      "displayName": "Brown",
+      "emoji": "🟤"
+    },
+    {
+      "label": "black",
+      "displayName": "Black",
+      "emoji": "⚫"
+    },
+    {
+      "label": "white",
+      "displayName": "White",
+      "emoji": "⚪"
+    },
+    {
+      "label": "yellow",
+      "displayName": "Yellow",
+      "emoji": "🟡"
+    },
+    {
+      "label": "orange",
+      "displayName": "Orange",
+      "emoji": "🟠"
+    },
+    {
+      "label": "gray",
+      "displayName": "Gray",
+      "emoji": "🌫️"
+    },
+    {
+      "label": "pink",
+      "displayName": "Pink",
+      "emoji": "🩷"
+    },
+    {
+      "label": "violet",
+      "displayName": "Violet",
+      "emoji": "🟣"
+    },
+    {
+      "label": "light",
+      "displayName": "Light",
+      "emoji": "💡"
+    },
+    {
+      "label": "dark",
+      "displayName": "Dark",
+      "emoji": "🌑"
+    },
+    {
+      "label": "bread",
+      "displayName": "Bread",
+      "emoji": "🍞"
+    },
+    {
+      "label": "egg",
+      "displayName": "Egg",
+      "emoji": "🥚"
+    },
+    {
+      "label": "fish",
+      "displayName": "Fish",
+      "emoji": "🐟"
+    },
+    {
+      "label": "meat",
+      "displayName": "Meat",
+      "emoji": "🥩"
+    },
+    {
+      "label": "chicken",
+      "displayName": "Chicken",
+      "emoji": "🍗"
+    },
+    {
+      "label": "spaghetti",
+      "displayName": "Spaghetti",
+      "emoji": "🍝"
+    },
+    {
+      "label": "rice",
+      "displayName": "Rice",
+      "emoji": "🍚"
+    },
+    {
+      "label": "longanisa",
+      "displayName": "Longanisa",
+      "emoji": "🌭"
+    },
+    {
+      "label": "shrimp",
+      "displayName": "Shrimp",
+      "emoji": "🍤"
+    },
+    {
+      "label": "crab",
+      "displayName": "Crab",
+      "emoji": "🦀"
+    },
+    {
+      "label": "hot",
+      "displayName": "Hot",
+      "emoji": "🔥"
+    },
+    {
+      "label": "cold",
+      "displayName": "Cold",
+      "emoji": "🧊"
+    },
+    {
+      "label": "juice",
+      "displayName": "Juice",
+      "emoji": "🧃"
+    },
+    {
+      "label": "milk",
+      "displayName": "Milk",
+      "emoji": "🥛"
+    },
+    {
+      "label": "coffee",
+      "displayName": "Coffee",
+      "emoji": "☕"
+    },
+    {
+      "label": "tea",
+      "displayName": "Tea",
+      "emoji": "🍵"
+    },
+    {
+      "label": "beer",
+      "displayName": "Beer",
+      "emoji": "🍺"
+    },
+    {
+      "label": "wine",
+      "displayName": "Wine",
+      "emoji": "🍷"
+    },
+    {
+      "label": "sugar",
+      "displayName": "Sugar",
+      "emoji": "🧂"
+    },
+    {
+      "label": "no_sugar",
+      "displayName": "No Sugar",
+      "emoji": "🚫"
+    }
+  ]
+}
