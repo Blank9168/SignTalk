@@ -12,7 +12,12 @@ data class DictionaryEntity(
     val category: String,
     val description: String,
     val emoji: String,
-    val isUserAdded: Boolean
+    val isUserAdded: Boolean,
+    // Nullable so every one of the 105 seeded rows (inserted with the old
+    // 7-arg constructor call, before this column existed) gets NULL here --
+    // see MIGRATION_1_2 in SignTalkDatabase.kt for how existing installs
+    // pick this column up.
+    val videoUri: String? = null
 )
 
 fun DictionaryEntity.toDomain() = DictionaryEntry(
@@ -22,7 +27,8 @@ fun DictionaryEntity.toDomain() = DictionaryEntry(
     category = category,
     description = description,
     emoji = emoji,
-    isUserAdded = isUserAdded
+    isUserAdded = isUserAdded,
+    videoUri = videoUri
 )
 
 fun DictionaryEntry.toEntity() = DictionaryEntity(
@@ -32,5 +38,6 @@ fun DictionaryEntry.toEntity() = DictionaryEntity(
     category = category,
     description = description,
     emoji = emoji,
-    isUserAdded = isUserAdded
+    isUserAdded = isUserAdded,
+    videoUri = videoUri
 )

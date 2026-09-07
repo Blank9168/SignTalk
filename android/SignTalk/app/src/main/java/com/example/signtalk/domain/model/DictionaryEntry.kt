@@ -12,5 +12,10 @@ data class DictionaryEntry(
     val category: String,
     val description: String,
     val emoji: String,
-    val isUserAdded: Boolean = false
+    val isUserAdded: Boolean = false,
+    // Content-resolver URI (string form) of a video the user attached showing
+    // this sign performed, or null if none has been added yet. Works for any
+    // entry -- including the seeded FSL-105 placeholders, which otherwise have
+    // no reference video/image at all.
+    val videoUri: String? = null
 )

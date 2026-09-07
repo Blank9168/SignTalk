@@ -1,8 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme (light). -->
     <style name="Base.Theme.SignTalk" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/teal_primary</item>
+        <item name="colorOnPrimary">@color/light_surface</item>
+        <item name="colorSecondary">@color/amber_accent</item>
+        <item name="colorOnSecondary">@color/light_surface</item>
+        <item name="colorError">@color/error_red</item>
+        <item name="android:colorBackground">@color/light_background</item>
+        <item name="colorSurface">@color/light_surface</item>
     </style>
 
     <style name="Theme.SignTalk" parent="Base.Theme.SignTalk" />

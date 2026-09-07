@@ -3,7 +3,6 @@ package com.example.signtalk.ui.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.signtalk.domain.repository.AppSettings
-import com.example.signtalk.domain.repository.AuthRepository
 import com.example.signtalk.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -11,8 +10,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
-    private val settingsRepository: SettingsRepository,
-    private val authRepository: AuthRepository
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     val settings: StateFlow<AppSettings> = settingsRepository.settings.stateIn(
@@ -24,9 +22,4 @@ class SettingsViewModel(
     fun setConfidenceThreshold(threshold: Float) = viewModelScope.launch { settingsRepository.setConfidenceThreshold(threshold) }
     fun setUseFrontCamera(useFront: Boolean) = viewModelScope.launch { settingsRepository.setUseFrontCamera(useFront) }
     fun setUseMockRecognition(useMock: Boolean) = viewModelScope.launch { settingsRepository.setUseMockRecognition(useMock) }
-
-    fun logout(onDone: () -> Unit) = viewModelScope.launch {
-        authRepository.logout()
-        onDone()
-    }
 }

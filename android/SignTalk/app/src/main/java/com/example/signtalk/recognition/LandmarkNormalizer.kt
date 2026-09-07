@@ -29,8 +29,12 @@ object LandmarkNormalizer {
 
         val dx = middleMcp.x() - wrist.x()
         val dy = middleMcp.y() - wrist.y()
-        val dz = middleMcp.z() - wrist.z()
-        val scale = sqrt(dx * dx + dy * dy + dz * dz).coerceAtLeast(MIN_SCALE)
+        // Scale uses only x/y (matches ai/dataset/landmarks.py's normalize_hand(), which
+        // takes np.linalg.norm(centered[MIDDLE_MCP_IDX, :2]) -- MediaPipe's single-camera z
+        // depth estimate is noisier and was deliberately excluded from the scale reference
+        // at training time. z IS still included in the output features below, divided by
+        // this xy-only scale -- only the scale computation itself must exclude it.
+        val scale = sqrt(dx * dx + dy * dy).coerceAtLeast(MIN_SCALE)
 
         val out = FloatArray(21 * 3)
         for (i in landmarks.indices) {

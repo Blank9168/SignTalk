@@ -1,25 +1,50 @@
 """
-Train SignLSTM on ai/dataset/raw/<label>/*.npy -- all 105 FSL-105 sign
-classes, all backed by real Filipino Sign Language video data (De La Salle
-University / DOST, CC-BY-4.0). No synthetic/placeholder classes are used in
-this version (see ../dataset/legacy_12class/ for the earlier 4-real+8-
-synthetic 12-class experiment this superseded).
+Train SignLSTM on ai/dataset/raw/<label>/*.npy for the 2026-09-06
+bilingual 50-sign vocabulary (25 FSL + 25 ASL -- see labels_50.json and
+proposal-notes.md's "Sign vocabulary" section for the full audit).
 
-Each class has ~18-22 real recorded clips (one signer), split per-class into
-train/val so every class is represented in both splits despite the small
-per-class sample count.
+As of 2026-09-06, all 50 of the 50 classes have real training data:
+  - 22 FSL classes (10 numbers: isa-sampu, 12 colors: asul/berde/pula/
+    kayumanggi/itim/puti/dilaw/kahel/abo/rosas/lila/maliwanag): real
+    FSL-105 video + landmark data (De La Salle University / DOST,
+    CC-BY-4.0), copied from the FSL-105 dataset's unused english-slug
+    classes (one, two, ... blue, green, ...) to these Filipino slugs --
+    the same file-copy pattern used earlier for the greetings
+    (magandang_umaga/hapon/gabi). These 22 classes replace an earlier,
+    unfilmed 22-word FSL list (question words, vehicles, Paalam, Ingat Ka,
+    calendar/weather) for which five research passes found no usable
+    open dataset or reference footage; see proposal-notes.md for the
+    swap rationale and the full english->Filipino slug mapping.
+  - 3 FSL greetings (magandang_umaga/hapon/gabi): real FSL-105 video data
+    (De La Salle University / DOST, CC-BY-4.0), ~20-22 clips/class.
+  - 25 ASL words: real clips from Microsoft's ASL Citizen dataset -- 19
+    direct single-sign words (6 clips/class) plus 6 multi-word phrases
+    (Good Morning, Good Afternoon, Good Evening, How Are You, Nice To Meet
+    You, See You Tomorrow) built by concatenating + resampling their
+    component-word landmark sequences (4 samples/class).
+See ../dataset/raw_archive_fsl105_unused/ for the OLD FSL-105 clips that
+used to sit under some of these English slugs (hello, understand, know,
+yes, ... -- FSL-105 data mislabeled as if it were these ASL/FSL words) --
+archived, not deleted, in case anyone wants to compare, but no longer used
+since they don't correspond to any of the actual 50 target signs.
 
-With 105 classes, a full 105x105 confusion matrix image is unreadable, so
-this script instead reports: overall accuracy, macro/weighted P/R/F1, the
-full classification_report.txt (per-class), and a short list of the most
-confused class pairs (off-diagonal confusion counts), plus the raw
-confusion matrix as a CSV for anyone who wants to inspect it in full.
+Per-class sample counts here are much smaller (4-22) than the old 105-class
+version's ~18-22 uniform count, so treat any reported accuracy as a signal
+on this exact tiny dataset, not a generalization claim -- more so than the
+105-class caveat already was.
+
+With all 50 classes now populated, the full 50x50 confusion matrix is
+meaningful; this script reports overall accuracy, macro/weighted P/R/F1,
+the full classification_report.txt (per-class, with zero_division=0 so any
+still-thin classes just show lower support instead of erroring), a short
+list of the most confused class pairs, and the raw confusion matrix as CSV.
 """
 
 import os
 import sys
 import json
 import csv
+import glob
 
 import numpy as np
 import torch
@@ -38,7 +63,7 @@ from model import SignLSTM
 
 RAW_DIR = os.path.join(os.path.dirname(__file__), "..", "dataset", "raw")
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "models")
-LABELS_PATH = os.path.join(os.path.dirname(__file__), "..", "dataset", "labels_105.json")
+LABELS_PATH = os.path.join(os.path.dirname(__file__), "..", "dataset", "labels_50.json")
 
 BATCH_SIZE = 32
 MAX_EPOCHS = 80
@@ -128,7 +153,9 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     os.makedirs(MODELS_DIR, exist_ok=True)
 
-    print(f"Training on {len(LABEL_ORDER)} classes (all real FSL-105 data)")
+    n_with_data = sum(1 for lbl in LABEL_ORDER if glob.glob(os.path.join(RAW_DIR, lbl, "*.npy")))
+    print(f"Training on {len(LABEL_ORDER)} classes ({n_with_data} have real data, "
+          f"{len(LABEL_ORDER) - n_with_data} have none yet and will never be predicted)")
 
     train_ds, val_ds = build_datasets()
     print(f"train samples (pre-augment base): {len(train_ds.base_samples)}, "
@@ -203,8 +230,8 @@ def main():
 
     cm = confusion_matrix(all_true, all_preds, labels=list(range(len(LABEL_ORDER))))
 
-    # Full confusion matrix as CSV (105x105 image would be unreadable, but a
-    # CSV is easy to load/filter/pivot for anyone who wants the full detail).
+    # Full confusion matrix as CSV (a 50x50 image is workable but a CSV is
+    # still easier to load/filter/pivot for anyone who wants the full detail).
     with open(os.path.join(MODELS_DIR, "confusion_matrix.csv"), "w", newline="") as f:
         writer = csv.writer(f)
         writer.writerow(["true\\pred"] + LABEL_ORDER)
@@ -224,8 +251,10 @@ def main():
         target_names=LABEL_ORDER, zero_division=0,
     )
     with open(os.path.join(MODELS_DIR, "classification_report.txt"), "w") as f:
-        f.write("SignTalk-mini -- 105-class FSL-105 real-data-only model\n")
-        f.write("All classes are backed by real FSL-105 video data (CC-BY-4.0).\n")
+        f.write("SignTalk-mini -- 50-class bilingual (FSL+ASL) real-data model\n")
+        f.write("All 50 classes are now backed by real video + landmark data: FSL-105\n")
+        f.write("(De La Salle University / DOST, CC-BY-4.0) for the 25 FSL classes,\n")
+        f.write("ASL Citizen (Microsoft Research) for the 25 ASL classes.\n")
         f.write("Small per-class sample count (~18-22 clips/class, ~4/class held out) --\n")
         f.write("high accuracy here is an encouraging signal on this dataset/signer, not\n")
         f.write("proof of generalization to new signers, lighting, or camera setups.\n\n")
@@ -250,10 +279,12 @@ def main():
         "architecture": "bidirectional LSTM (SignLSTM)",
         "data_source": {
             "type": "real",
-            "source": "FSL-105 (De La Salle University / DOST)",
-            "license": "CC-BY-4.0",
-            "url": "https://data.mendeley.com/datasets/48y2y99mb9/2",
+            "source": "FSL-105 (De La Salle University / DOST, CC-BY-4.0) + ASL Citizen (Microsoft Research)",
+            "license": "CC-BY-4.0 (FSL-105) / see ASL Citizen terms",
+            "url": "https://data.mendeley.com/datasets/48y2y99mb9/2 ; https://www.microsoft.com/en-us/research/project/asl-citizen/",
             "clips_used": len(train_ds.base_samples) + len(val_ds.base_samples),
+            "classes_with_data": n_with_data,
+            "classes_total": len(LABEL_ORDER),
         },
         "overall_val_accuracy": overall_acc,
         "macro_precision": macro_p,

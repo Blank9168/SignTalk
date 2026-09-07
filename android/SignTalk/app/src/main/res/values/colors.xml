@@ -2,4 +2,21 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- SignTalk brand palette: a calm teal (accessibility-friendly, evokes
+         "communication") plus a warm amber accent for confidence/attention
+         states. Mirrors the values that used to live in ui/theme/Color.kt. -->
+    <color name="teal_primary">#FF00796B</color>
+    <color name="teal_primary_dark">#FF004D40</color>
+    <color name="teal_primary_light">#FF48A999</color>
+    <color name="amber_accent">#FFFFA000</color>
+
+    <color name="success_green">#FF2E7D32</color>
+    <color name="error_red">#FFC62828</color>
+    <color name="warn_amber">#FFF9A825</color>
+
+    <color name="light_background">#FFF7FAF9</color>
+    <color name="light_surface">#FFFFFFFF</color>
+    <color name="dark_background">#FF0F1513</color>
+    <color name="dark_surface">#FF16201D</color>
 </resources>

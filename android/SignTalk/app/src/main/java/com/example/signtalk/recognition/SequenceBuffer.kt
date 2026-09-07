@@ -35,4 +35,48 @@ class SequenceBuffer(
         frames.forEachIndexed { i, frame -> frame.copyInto(out, destinationOffset = i * featuresPerFrame) }
         return out
     }
+
+    /**
+     * Same as [toFlatArrayOrNull], but allows classifying before the buffer is fully
+     * populated: once at least [minFrames] real frames have been collected, the available
+     * frames are **uniformly resampled** to fill all [sequenceLength] slots, rather than
+     * making the caller wait for a full [sequenceLength] of real frames.
+     *
+     * This deliberately mirrors `ai/dataset/landmarks.py`'s `sample_to_fixed_length()` --
+     * the exact function training used to turn FSL-105's variable-length clips into fixed
+     * 30-frame sequences (`indices = round(linspace(0, t-1, target_len))`). Using the same
+     * resampling here, instead of e.g. repeating the oldest frame to fill the gap, matters
+     * most for signs with real motion in them: stretching the T real frames collected *so
+     * far* proportionally across all 30 slots represents "the gesture as captured so far,
+     * sped up to fill the window" -- much closer to what a genuinely shorter training clip
+     * looked like after resampling -- rather than "the gesture's first instant, frozen and
+     * held for several extra frames," which is what naive front-padding would produce and
+     * which has no real analog in how the model was trained. It's still an approximation
+     * (a still-in-progress motion sign genuinely hasn't happened yet, no resampling trick
+     * changes that) -- see [minFrames]'s caller for how that residual risk is bounded.
+     *
+     * As more real frames keep arriving each call, T grows and the resampled points shift
+     * to draw from a larger, more complete window, converging on [toFlatArrayOrNull]'s
+     * exact behavior once T reaches [sequenceLength].
+     *
+     * Returns null if fewer than [minFrames] frames are available yet.
+     */
+    fun toFlatArrayResampled(minFrames: Int): FloatArray? {
+        val t = frames.size
+        if (t < minFrames) return null
+        val out = FloatArray(sequenceLength * featuresPerFrame)
+        if (t == sequenceLength) {
+            frames.forEachIndexed { i, frame -> frame.copyInto(out, destinationOffset = i * featuresPerFrame) }
+            return out
+        }
+        for (i in 0 until sequenceLength) {
+            val srcIndex = if (sequenceLength == 1) {
+                0
+            } else {
+                Math.round(i.toFloat() * (t - 1) / (sequenceLength - 1).toFloat())
+            }
+            frames[srcIndex].copyInto(out, destinationOffset = i * featuresPerFrame)
+        }
+        return out
+    }
 }

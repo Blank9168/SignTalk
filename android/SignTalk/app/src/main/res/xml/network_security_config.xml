@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Scopes cleartext (plain http://) traffic to just the local dev backend
+  hosts, instead of weakening cleartext policy for the whole app. The
+  Node/Express API (backend/sign-talk-api) runs over plain HTTP in local
+  dev (see NetworkConfig.kt) — Android 9+ (API 28, this app's minSdk)
+  blocks cleartext traffic by default, so without this the app's network
+  calls would fail with a CLEARTEXT_NOT_PERMITTED error.
+
+  10.0.2.2 is the Android emulator's alias for the host machine's
+  localhost. If you're testing on a REAL phone over Wi-Fi instead, add
+  another <domain> entry below with your PC's LAN IP (e.g. 192.168.1.23)
+  and update NetworkConfig.BASE_URL to match — "localhost"/10.0.2.2 from
+  a physical device refers to the phone itself, not your PC.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">10.0.2.2</domain>
+        <domain includeSubdomains="true">localhost</domain>
+    </domain-config>
+</network-security-config>

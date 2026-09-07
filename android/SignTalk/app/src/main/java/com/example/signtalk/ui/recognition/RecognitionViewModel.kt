@@ -1,8 +1,12 @@
 package com.example.signtalk.ui.recognition
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.signtalk.data.remote.RetrofitClient
+import com.example.signtalk.data.remote.dto.RecognitionLogRequestDto
+import com.example.signtalk.domain.model.RecognitionResult
 import com.example.signtalk.domain.model.RecognitionState
 import com.example.signtalk.domain.repository.AppSettings
 import com.example.signtalk.domain.repository.SettingsRepository
@@ -37,6 +41,10 @@ class RecognitionViewModel(
     val lastSpokenText: StateFlow<String> = _lastSpokenText.asStateFlow()
 
     private var lastSpokenLabel: String? = null
+    // Separate dedup key from lastSpokenLabel -- logging should happen
+    // whenever a NEW sign is recognized regardless of the user's
+    // auto-speak setting, so it can't share that gate.
+    private var lastLoggedLabel: String? = null
 
     init {
         viewModelScope.launch {
@@ -50,6 +58,7 @@ class RecognitionViewModel(
             recognitionState.collect { state ->
                 if (state is RecognitionState.Recognized) {
                     maybeSpeak(state.result.displayName, state.result.label)
+                    maybeLogRecognition(state.result)
                 }
             }
         }
@@ -64,6 +73,33 @@ class RecognitionViewModel(
         speechOutput.speak(displayName)
     }
 
+    /**
+     * Best-effort POST to /api/logs/recognition (backend/sign-talk-api --
+     * see RecognitionLogRequestDto) so the "Logs/statistics" part of the
+     * tech stack has real data to aggregate, instead of nothing. Fires once
+     * per newly-recognized sign (not every frame the sign stays on screen),
+     * same dedup shape as [maybeSpeak] but tracked separately since logging
+     * shouldn't be silenced by the user's auto-speak setting. Never throws
+     * into the caller -- an unreachable/offline backend should never affect
+     * the recognition UI itself.
+     */
+    private fun maybeLogRecognition(result: RecognitionResult) {
+        if (lastLoggedLabel == result.label) return
+        lastLoggedLabel = result.label
+        viewModelScope.launch {
+            try {
+                RetrofitClient.apiService.logRecognition(
+                    RecognitionLogRequestDto(
+                        predictedSlug = result.label,
+                        confidence = result.confidence.toDouble()
+                    )
+                )
+            } catch (e: Exception) {
+                Log.w("RecognitionViewModel", "Recognition log skipped (backend unreachable or offline?): ${e.message}")
+            }
+        }
+    }
+
     fun onFrame(bitmapProvider: () -> android.graphics.Bitmap, timestampMs: Long) {
         engine.processFrame(bitmapProvider, timestampMs)
     }
@@ -71,6 +107,7 @@ class RecognitionViewModel(
     fun resetBuffer() {
         engine.reset()
         lastSpokenLabel = null
+        lastLoggedLabel = null
     }
 
     override fun onCleared() {

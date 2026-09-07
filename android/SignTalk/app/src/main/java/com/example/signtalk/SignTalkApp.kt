@@ -15,7 +15,12 @@ class SignTalkApp : Application() {
     override fun onCreate() {
         super.onCreate()
         appScope.launch {
+            // Guarantees a full, usable offline dictionary first (from the
+            // bundled seed), then best-effort upgrades it with whatever the
+            // backend has -- see AppContainer.syncWithBackend for why a
+            // failure here is swallowed rather than shown to the user.
             container.seedDictionaryIfNeeded()
+            container.syncWithBackend()
         }
     }
 }

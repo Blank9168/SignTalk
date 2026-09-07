@@ -9,4 +9,6 @@ interface DictionaryRepository {
     suspend fun findByLabel(label: String): DictionaryEntry?
     suspend fun addEntry(entry: DictionaryEntry): Long
     suspend fun deleteEntry(id: Long)
+    /** Attaches (or clears, with null) a video URI to any entry, seeded or user-added. */
+    suspend fun setVideoUri(id: Long, videoUri: String?)
 }

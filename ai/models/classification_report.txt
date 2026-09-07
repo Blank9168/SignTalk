@@ -1,146 +1,79 @@
-SignTalk-mini -- 105-class FSL-105 real-data-only model
-All classes are backed by real FSL-105 video data (CC-BY-4.0).
+SignTalk-mini -- 50-class bilingual (FSL+ASL) real-data model
+All 50 classes are now backed by real video + landmark data: FSL-105
+(De La Salle University / DOST, CC-BY-4.0) for the 25 FSL classes,
+ASL Citizen (Microsoft Research) for the 25 ASL classes.
 Small per-class sample count (~18-22 clips/class, ~4/class held out) --
 high accuracy here is an encouraging signal on this dataset/signer, not
 proof of generalization to new signers, lighting, or camera setups.
 
-Overall val accuracy: 0.9452
-Macro precision/recall/F1: 0.9541 / 0.9452 / 0.9436
+Overall val accuracy: 0.9280
+Macro precision/recall/F1: 0.8630 / 0.8950 / 0.8707
 
-Top 23 most-confused class pairs (val split):
-  im_fine              predicted as father                x1
-  no                   predicted as three                 x1
-  four                 predicted as seven                 x1
-  seven                predicted as five                  x1
-  ten                  predicted as tomorrow              x1
-  january              predicted as july                  x1
-  january              predicted as august                x1
-  march                predicted as november              x1
-  may                  predicted as february              x1
-  may                  predicted as december              x1
-  june                 predicted as march                 x1
-  july                 predicted as august                x1
-  august               predicted as tuesday               x1
-  september            predicted as january               x1
-  october              predicted as march                 x1
-  october              predicted as november              x1
-  parents              predicted as mother                x1
-  parents              predicted as uncle                 x1
-  blind                predicted as pink                  x1
-  blue                 predicted as hello                 x1
-  pink                 predicted as wine                  x1
-  egg                  predicted as coffee                x1
-  hot                  predicted as juice                 x1
+Top 9 most-confused class pairs (val split):
+  apat                 predicted as pito                  x1
+  anim                 predicted as asul                  x1
+  pito                 predicted as apat                  x1
+  pito                 predicted as walo                  x1
+  berde                predicted as sampu                 x1
+  correct              predicted as fast                  x1
+  father               predicted as mother                x1
+  girl                 predicted as nice_to_meet_you      x1
+  married              predicted as nice_to_meet_you      x1
 
 Full per-class report:
                   precision    recall  f1-score   support
 
-    good_morning       1.00      1.00      1.00         4
-  good_afternoon       1.00      1.00      1.00         4
-    good_evening       1.00      1.00      1.00         4
-           hello       0.80      1.00      0.89         4
-     how_are_you       1.00      1.00      1.00         4
-         im_fine       1.00      0.75      0.86         4
-nice_to_meet_you       1.00      1.00      1.00         4
-       thank_you       1.00      1.00      1.00         4
-   youre_welcome       1.00      1.00      1.00         4
-see_you_tomorrow       1.00      1.00      1.00         4
-      understand       1.00      1.00      1.00         4
- dont_understand       1.00      1.00      1.00         4
-            know       1.00      1.00      1.00         4
-       dont_know       1.00      1.00      1.00         4
-              no       1.00      0.75      0.86         4
-             yes       1.00      1.00      1.00         4
-           wrong       1.00      1.00      1.00         4
-         correct       1.00      1.00      1.00         4
-            slow       1.00      1.00      1.00         4
-            fast       1.00      1.00      1.00         4
-             one       1.00      1.00      1.00         4
-             two       1.00      1.00      1.00         4
-           three       0.80      1.00      0.89         4
-            four       1.00      0.75      0.86         4
-            five       0.80      1.00      0.89         4
-             six       1.00      1.00      1.00         4
-           seven       0.75      0.75      0.75         4
-           eight       1.00      1.00      1.00         4
-            nine       1.00      1.00      1.00         4
-             ten       1.00      0.75      0.86         4
-         january       0.67      0.50      0.57         4
-        february       0.80      1.00      0.89         4
-           march       0.60      0.75      0.67         4
-           april       1.00      1.00      1.00         4
-             may       1.00      0.50      0.67         4
-            june       1.00      0.75      0.86         4
-            july       0.75      0.75      0.75         4
-          august       0.60      0.75      0.67         4
-       september       1.00      0.75      0.86         4
-         october       1.00      0.50      0.67         4
-        november       0.67      1.00      0.80         4
-        december       0.80      1.00      0.89         4
-          monday       1.00      1.00      1.00         4
-         tuesday       0.80      1.00      0.89         4
-       wednesday       1.00      1.00      1.00         4
-        thursday       1.00      1.00      1.00         4
-          friday       1.00      1.00      1.00         4
-        saturday       1.00      1.00      1.00         4
-          sunday       1.00      1.00      1.00         4
-           today       1.00      1.00      1.00         4
-        tomorrow       0.80      1.00      0.89         4
-       yesterday       1.00      1.00      1.00         4
-          father       0.80      1.00      0.89         4
-          mother       0.80      1.00      0.89         4
-             son       1.00      1.00      1.00         4
-        daughter       1.00      1.00      1.00         4
-     grandfather       1.00      1.00      1.00         4
-     grandmother       1.00      1.00      1.00         4
-           uncle       0.80      1.00      0.89         4
-          auntie       1.00      1.00      1.00         4
-          cousin       1.00      1.00      1.00         4
-         parents       1.00      0.50      0.67         4
-             boy       1.00      1.00      1.00         4
-            girl       1.00      1.00      1.00         4
-             man       1.00      1.00      1.00         4
-           woman       1.00      1.00      1.00         4
-            deaf       1.00      1.00      1.00         4
- hard_of_hearing       1.00      1.00      1.00         4
-weelchair_person       1.00      1.00      1.00         4
-           blind       1.00      0.75      0.86         4
-      deaf_blind       1.00      1.00      1.00         4
-         married       1.00      1.00      1.00         4
-            blue       1.00      0.75      0.86         4
-           green       1.00      1.00      1.00         4
-             red       1.00      1.00      1.00         4
-           brown       1.00      1.00      1.00         4
-           black       1.00      1.00      1.00         4
-           white       1.00      1.00      1.00         4
-          yellow       1.00      1.00      1.00         4
-          orange       1.00      1.00      1.00         4
-            gray       1.00      1.00      1.00         4
-            pink       0.75      0.75      0.75         4
-          violet       1.00      1.00      1.00         4
-           light       1.00      1.00      1.00         4
-            dark       1.00      1.00      1.00         4
-           bread       1.00      1.00      1.00         4
-             egg       1.00      0.75      0.86         4
-            fish       1.00      1.00      1.00         4
-            meat       1.00      1.00      1.00         4
-         chicken       1.00      1.00      1.00         4
-       spaghetti       1.00      1.00      1.00         4
-            rice       1.00      1.00      1.00         4
-       longanisa       1.00      1.00      1.00         4
-          shrimp       1.00      1.00      1.00         4
-            crab       1.00      1.00      1.00         4
-             hot       1.00      0.75      0.86         4
-            cold       1.00      1.00      1.00         4
-           juice       0.80      1.00      0.89         4
-            milk       1.00      1.00      1.00         4
-          coffee       0.80      1.00      0.89         4
-             tea       1.00      1.00      1.00         4
-            beer       1.00      1.00      1.00         4
-            wine       0.80      1.00      0.89         4
-           sugar       1.00      1.00      1.00         4
-        no_sugar       1.00      1.00      1.00         4
+             isa       1.00      1.00      1.00         4
+          dalawa       1.00      1.00      1.00         4
+           tatlo       1.00      1.00      1.00         4
+            apat       0.75      0.75      0.75         4
+            lima       1.00      1.00      1.00         4
+            anim       1.00      0.75      0.86         4
+            pito       0.67      0.50      0.57         4
+            walo       0.80      1.00      0.89         4
+           siyam       1.00      1.00      1.00         4
+           sampu       0.80      1.00      0.89         4
+            asul       0.80      1.00      0.89         4
+           berde       1.00      0.75      0.86         4
+            pula       1.00      1.00      1.00         4
+      kayumanggi       1.00      1.00      1.00         4
+            itim       1.00      1.00      1.00         4
+            puti       1.00      1.00      1.00         4
+           dilaw       1.00      1.00      1.00         4
+           kahel       1.00      1.00      1.00         4
+             abo       1.00      1.00      1.00         4
+           rosas       1.00      1.00      1.00         4
+            lila       1.00      1.00      1.00         4
+       maliwanag       1.00      1.00      1.00         4
+ magandang_umaga       1.00      1.00      1.00         4
+ magandang_hapon       1.00      1.00      1.00         4
+  magandang_gabi       1.00      1.00      1.00         4
+    good_morning       1.00      1.00      1.00         1
+  good_afternoon       1.00      1.00      1.00         1
+    good_evening       1.00      1.00      1.00         1
+           hello       1.00      1.00      1.00         1
+     how_are_you       1.00      1.00      1.00         1
+         im_fine       1.00      1.00      1.00         1
+nice_to_meet_you       0.33      1.00      0.50         1
+       thank_you       1.00      1.00      1.00         1
+   youre_welcome       1.00      1.00      1.00         1
+see_you_tomorrow       1.00      1.00      1.00         1
+      understand       1.00      1.00      1.00         1
+ dont_understand       1.00      1.00      1.00         1
+            know       1.00      1.00      1.00         1
+       dont_know       1.00      1.00      1.00         1
+             yes       1.00      1.00      1.00         1
+              no       1.00      1.00      1.00         1
+           wrong       1.00      1.00      1.00         1
+         correct       0.00      0.00      0.00         1
+            slow       1.00      1.00      1.00         1
+            fast       0.50      1.00      0.67         1
+          father       0.00      0.00      0.00         1
+          mother       0.50      1.00      0.67         1
+             boy       1.00      1.00      1.00         1
+            girl       0.00      0.00      0.00         1
+         married       0.00      0.00      0.00         1
 
-        accuracy                           0.95       420
-       macro avg       0.95      0.95      0.94       420
-    weighted avg       0.95      0.95      0.94       420
+        accuracy                           0.93       125
+       macro avg       0.86      0.90      0.87       125
+    weighted avg       0.92      0.93      0.92       125

@@ -31,7 +31,12 @@ from landmarks import HandLandmarkExtractor, sample_to_fixed_length
 from model import SignLSTM
 
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "models")
-LABELS_PATH = os.path.join(os.path.dirname(__file__), "..", "dataset", "labels_105.json")
+LABELS_PATH = os.path.join(os.path.dirname(__file__), "..", "dataset", "labels_50.json")
+# NOTE (2026-09-06): repointed from labels_105.json to labels_50.json now that
+# sign_lstm.pt has been retrained on the 50-class bilingual FSL+ASL vocabulary
+# (all 50 classes have real data -- see proposal-notes.md's "VOCABULARY SWAP"
+# and "AI-side implementation" sections). The old 105-class labels/model are
+# still available as labels_105.json if anyone wants to go back to that.
 SEQUENCE_LENGTH = 30
 
 

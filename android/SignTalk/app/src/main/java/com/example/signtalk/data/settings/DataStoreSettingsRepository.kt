@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.signtalk.domain.repository.AppSettings
 import com.example.signtalk.domain.repository.SettingsRepository
@@ -20,6 +21,7 @@ class DataStoreSettingsRepository(private val context: Context) : SettingsReposi
         val CONFIDENCE_THRESHOLD = floatPreferencesKey("confidence_threshold")
         val USE_FRONT_CAMERA = booleanPreferencesKey("use_front_camera")
         val USE_MOCK_RECOGNITION = booleanPreferencesKey("use_mock_recognition")
+        val BACKEND_MODEL_INFO = stringPreferencesKey("backend_model_info")
     }
 
     override val settings: Flow<AppSettings> = context.settingsDataStore.data.map { prefs ->
@@ -28,7 +30,8 @@ class DataStoreSettingsRepository(private val context: Context) : SettingsReposi
             speechRate = prefs[Keys.SPEECH_RATE] ?: 1.0f,
             confidenceThreshold = prefs[Keys.CONFIDENCE_THRESHOLD] ?: 0.6f,
             useFrontCamera = prefs[Keys.USE_FRONT_CAMERA] ?: true,
-            useMockRecognition = prefs[Keys.USE_MOCK_RECOGNITION] ?: false
+            useMockRecognition = prefs[Keys.USE_MOCK_RECOGNITION] ?: false,
+            backendModelInfo = prefs[Keys.BACKEND_MODEL_INFO]
         )
     }
 
@@ -50,5 +53,9 @@ class DataStoreSettingsRepository(private val context: Context) : SettingsReposi
 
     override suspend fun setUseMockRecognition(useMock: Boolean) {
         context.settingsDataStore.edit { it[Keys.USE_MOCK_RECOGNITION] = useMock }
+    }
+
+    override suspend fun setBackendModelInfo(info: String) {
+        context.settingsDataStore.edit { it[Keys.BACKEND_MODEL_INFO] = info }
     }
 }

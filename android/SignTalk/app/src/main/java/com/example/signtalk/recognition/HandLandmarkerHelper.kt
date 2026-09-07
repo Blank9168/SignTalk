@@ -35,6 +35,28 @@ class HandLandmarkerHelper(
     var isModelAvailable: Boolean = false
         private set
 
+    /**
+     * Builds and installs [handLandmarker] using [delegate]. Broken out from [setup] so
+     * setup can try GPU first and cleanly fall back to CPU if that fails -- see [setup].
+     */
+    private fun createLandmarker(modelAsset: String, delegate: Delegate) {
+        val baseOptions = BaseOptions.builder()
+            .setModelAssetPath(modelAsset)
+            .setDelegate(delegate)
+            .build()
+        val options = HandLandmarker.HandLandmarkerOptions.builder()
+            .setBaseOptions(baseOptions)
+            .setRunningMode(RunningMode.LIVE_STREAM)
+            .setNumHands(2)
+            .setMinHandDetectionConfidence(0.5f)
+            .setMinTrackingConfidence(0.5f)
+            .setMinHandPresenceConfidence(0.5f)
+            .setResultListener { result, _ -> listener.onResult(result) }
+            .setErrorListener { e -> listener.onError(e.message ?: "Hand landmarker error") }
+            .build()
+        handLandmarker = HandLandmarker.createFromOptions(context, options)
+    }
+
     fun setup() {
         val modelAsset = "hand_landmarker.task"
         if (!assetExists(modelAsset)) {
@@ -42,26 +64,30 @@ class HandLandmarkerHelper(
             listener.onError("hand_landmarker.task not found in assets/. See docs/MOBILE_APP_NOTES.md.")
             return
         }
-        try {
-            val baseOptions = BaseOptions.builder()
-                .setModelAssetPath(modelAsset)
-                .setDelegate(Delegate.CPU)
-                .build()
-            val options = HandLandmarker.HandLandmarkerOptions.builder()
-                .setBaseOptions(baseOptions)
-                .setRunningMode(RunningMode.LIVE_STREAM)
-                .setNumHands(2)
-                .setMinHandDetectionConfidence(0.5f)
-                .setMinTrackingConfidence(0.5f)
-                .setMinHandPresenceConfidence(0.5f)
-                .setResultListener { result, _ -> listener.onResult(result) }
-                .setErrorListener { e -> listener.onError(e.message ?: "Hand landmarker error") }
-                .build()
-            handLandmarker = HandLandmarker.createFromOptions(context, options)
-            isModelAvailable = true
-        } catch (e: Exception) {
-            isModelAvailable = false
-            listener.onError("Failed to load hand landmark model: ${e.message}")
+        // Try GPU first: landmark detection (not the small BiLSTM classifier) is the
+        // expensive per-frame step in this pipeline, and it runs on every analyzed camera
+        // frame, not just once a sequence is full -- so its per-frame latency directly sets
+        // how long "collect N real frames" takes in wall-clock time (reported during
+        // testing as the recognition screen "wanting to see hands for a period of time"
+        // before showing anything, especially noticeable on quicker/greeting-type signs).
+        // GPU delegate init is a real crash/incompatibility risk on some devices/emulators
+        // (well-documented upstream -- see project notes), so this can't be assumed safe
+        // and shipped without a fallback: if GPU init throws, silently retry on CPU, same
+        // as the previous (CPU-only) behavior, rather than leaving the screen stuck on
+        // "recognition model unavailable."
+        isModelAvailable = try {
+            createLandmarker(modelAsset, Delegate.GPU)
+            true
+        } catch (gpuError: Exception) {
+            handLandmarker?.close()
+            handLandmarker = null
+            try {
+                createLandmarker(modelAsset, Delegate.CPU)
+                true
+            } catch (cpuError: Exception) {
+                listener.onError("Failed to load hand landmark model: ${cpuError.message}")
+                false
+            }
         }
     }
 
