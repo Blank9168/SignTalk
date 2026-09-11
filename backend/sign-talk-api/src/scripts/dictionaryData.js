@@ -30,8 +30,8 @@ const dictionaryData = [
   { slug: "puti", label: "Puti", language: "FSL", category: "FSL - Colors", description: "Real FSL sign \"Puti\" (White), from the FSL-105 dataset's actual Filipino signer footage (gloss WHITE).", emoji: "⚪" },
   { slug: "dilaw", label: "Dilaw", language: "FSL", category: "FSL - Colors", description: "Real FSL sign \"Dilaw\" (Yellow), from the FSL-105 dataset's actual Filipino signer footage (gloss YELLOW).", emoji: "🟡" },
   { slug: "kahel", label: "Kahel", language: "FSL", category: "FSL - Colors", description: "Real FSL sign \"Kahel\" (Orange), from the FSL-105 dataset's actual Filipino signer footage (gloss ORANGE).", emoji: "🟠" },
-  { slug: "abo", label: "Abo", language: "FSL", category: "FSL - Colors", description: "Real FSL sign \"Abo\" (Gray), from the FSL-105 dataset's actual Filipino signer footage (gloss GRAY).", emoji: "🩶" },
-  { slug: "rosas", label: "Rosas", language: "FSL", category: "FSL - Colors", description: "Real FSL sign \"Rosas\" (Pink), from the FSL-105 dataset's actual Filipino signer footage (gloss PINK).", emoji: "🩷" },
+  { slug: "abo", label: "Abo", language: "FSL", category: "FSL - Colors", description: "Real FSL sign \"Abo\" (Gray), from the FSL-105 dataset's actual Filipino signer footage (gloss GRAY).", emoji: "🔘" },
+  { slug: "rosas", label: "Rosas", language: "FSL", category: "FSL - Colors", description: "Real FSL sign \"Rosas\" (Pink), from the FSL-105 dataset's actual Filipino signer footage (gloss PINK).", emoji: "💗" },
   { slug: "lila", label: "Lila", language: "FSL", category: "FSL - Colors", description: "Real FSL sign \"Lila\" (Violet), from the FSL-105 dataset's actual Filipino signer footage (gloss VIOLET).", emoji: "🟣" },
   { slug: "maliwanag", label: "Maliwanag", language: "FSL", category: "FSL - Colors", description: "Real FSL sign \"Maliwanag\" (Light), from the FSL-105 dataset's actual Filipino signer footage (gloss LIGHT).", emoji: "✨" },
 

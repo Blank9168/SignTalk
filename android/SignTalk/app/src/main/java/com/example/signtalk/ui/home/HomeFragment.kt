@@ -29,6 +29,9 @@ class HomeFragment : Fragment() {
         binding.recognitionCard.setOnClickListener {
             findNavController().navigate(R.id.action_home_to_recognition)
         }
+        binding.translateCard.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_translate)
+        }
         binding.dictionaryCard.setOnClickListener {
             findNavController().navigate(R.id.action_home_to_dictionary)
         }

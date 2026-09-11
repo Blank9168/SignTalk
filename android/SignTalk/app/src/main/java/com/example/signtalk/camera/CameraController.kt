@@ -39,7 +39,12 @@ class CameraController(private val context: Context) {
     ) {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
         cameraProviderFuture.addListener({
-            val provider = cameraProviderFuture.get()
+            val provider = try {
+                cameraProviderFuture.get()
+            } catch (e: Exception) {
+                Log.e("CameraController", "Failed to get camera provider", e)
+                return@addListener
+            }
             cameraProvider = provider
 
             val preview = Preview.Builder().build().also {
@@ -52,11 +57,20 @@ class CameraController(private val context: Context) {
             analysis.setAnalyzer(analysisExecutor) { imageProxy ->
                 handleFrame(imageProxy, onFrame)
             }
-            val selector = if (useFrontCamera) {
-                CameraSelector.DEFAULT_FRONT_CAMERA
-            } else {
-                CameraSelector.DEFAULT_BACK_CAMERA
+
+            // Fallback strategy: try the requested lens first, then whatever is available
+            val selector = when {
+                useFrontCamera && provider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA) ->
+                    CameraSelector.DEFAULT_FRONT_CAMERA
+                !useFrontCamera && provider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA) ->
+                    CameraSelector.DEFAULT_BACK_CAMERA
+                provider.hasCamera(CameraSelector.DEFAULT_BACK_CAMERA) ->
+                    CameraSelector.DEFAULT_BACK_CAMERA
+                provider.hasCamera(CameraSelector.DEFAULT_FRONT_CAMERA) ->
+                    CameraSelector.DEFAULT_FRONT_CAMERA
+                else -> if (useFrontCamera) CameraSelector.DEFAULT_FRONT_CAMERA else CameraSelector.DEFAULT_BACK_CAMERA
             }
+
             try {
                 provider.unbindAll()
                 provider.bindToLifecycle(lifecycleOwner, selector, preview, analysis)

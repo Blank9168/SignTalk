@@ -98,8 +98,8 @@ val seedDictionaryEntries: List<DictionaryEntity> = listOf(
     DictionaryEntity(0, "puti", "Puti", "FSL - Colors", "Real FSL sign \"Puti\" (White), from the FSL-105 dataset's actual Filipino signer footage (gloss WHITE).", "⚪", false),
     DictionaryEntity(0, "dilaw", "Dilaw", "FSL - Colors", "Real FSL sign \"Dilaw\" (Yellow), from the FSL-105 dataset's actual Filipino signer footage (gloss YELLOW).", "🟡", false),
     DictionaryEntity(0, "kahel", "Kahel", "FSL - Colors", "Real FSL sign \"Kahel\" (Orange), from the FSL-105 dataset's actual Filipino signer footage (gloss ORANGE).", "🟠", false),
-    DictionaryEntity(0, "abo", "Abo", "FSL - Colors", "Real FSL sign \"Abo\" (Gray), from the FSL-105 dataset's actual Filipino signer footage (gloss GRAY).", "🩶", false),
-    DictionaryEntity(0, "rosas", "Rosas", "FSL - Colors", "Real FSL sign \"Rosas\" (Pink), from the FSL-105 dataset's actual Filipino signer footage (gloss PINK).", "🩷", false),
+    DictionaryEntity(0, "abo", "Abo", "FSL - Colors", "Real FSL sign \"Abo\" (Gray), from the FSL-105 dataset's actual Filipino signer footage (gloss GRAY).", "🔘", false),
+    DictionaryEntity(0, "rosas", "Rosas", "FSL - Colors", "Real FSL sign \"Rosas\" (Pink), from the FSL-105 dataset's actual Filipino signer footage (gloss PINK).", "💗", false),
     DictionaryEntity(0, "lila", "Lila", "FSL - Colors", "Real FSL sign \"Lila\" (Violet), from the FSL-105 dataset's actual Filipino signer footage (gloss VIOLET).", "🟣", false),
     DictionaryEntity(0, "maliwanag", "Maliwanag", "FSL - Colors", "Real FSL sign \"Maliwanag\" (Light), from the FSL-105 dataset's actual Filipino signer footage (gloss LIGHT).", "✨", false),
 

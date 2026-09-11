@@ -26,6 +26,9 @@
             android:id="@+id/action_home_to_recognition"
             app:destination="@id/recognitionFragment" />
         <action
+            android:id="@+id/action_home_to_translate"
+            app:destination="@id/translateFragment" />
+        <action
             android:id="@+id/action_home_to_dictionary"
             app:destination="@id/dictionaryListFragment" />
         <action
@@ -38,6 +41,12 @@
         android:name="com.example.signtalk.ui.recognition.RecognitionFragment"
         android:label="Sign to Text &amp; Speech"
         tools:layout="@layout/fragment_recognition" />
+
+    <fragment
+        android:id="@+id/translateFragment"
+        android:name="com.example.signtalk.ui.translate.TranslateFragment"
+        android:label="Text/Speech to Sign"
+        tools:layout="@layout/fragment_translate" />
 
     <fragment
         android:id="@+id/dictionaryListFragment"

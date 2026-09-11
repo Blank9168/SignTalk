@@ -11,7 +11,6 @@ import android.view.Surface
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.MediaController
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -48,27 +47,15 @@ class DictionaryDetailFragment : Fragment() {
     // unrelated SurfaceView-in-Fragment issue is what was still blocking it
     // from actually being visible. TextureView draws through the normal
     // View hierarchy (like an ImageView would) and doesn't have this class
-    // of bug, so it's used here instead, with a small hand-rolled
-    // MediaController.MediaPlayerControl to keep the same tap-to-show
-    // play/pause/seek UI VideoView used to provide for free.
+    // of bug, so it's used here instead.
+    //
+    // NOTE (2026-09-10): the MediaController tap-to-show play/pause/seek
+    // overlay has been removed. Each clip just autoplays and loops on its
+    // own with no controls at all -- rewatching a sign is "look at it
+    // again", not "find the button".
     private var mediaPlayer: MediaPlayer? = null
-    private var mediaController: MediaController? = null
     private var pendingUri: Uri? = null
     private var currentSurface: Surface? = null
-
-    private val playerControl = object : MediaController.MediaPlayerControl {
-        override fun start() { mediaPlayer?.start() }
-        override fun pause() { mediaPlayer?.pause() }
-        override fun getDuration(): Int = mediaPlayer?.duration ?: 0
-        override fun getCurrentPosition(): Int = mediaPlayer?.currentPosition ?: 0
-        override fun seekTo(pos: Int) { mediaPlayer?.seekTo(pos) }
-        override fun isPlaying(): Boolean = mediaPlayer?.isPlaying ?: false
-        override fun getBufferPercentage(): Int = 0
-        override fun canPause(): Boolean = true
-        override fun canSeekBackward(): Boolean = true
-        override fun canSeekForward(): Boolean = true
-        override fun getAudioSessionId(): Int = mediaPlayer?.audioSessionId ?: 0
-    }
 
     private val surfaceTextureListener = object : TextureView.SurfaceTextureListener {
         override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
@@ -230,13 +217,6 @@ class DictionaryDetailFragment : Fragment() {
 
     private fun showVideo(uri: Uri) {
         binding.entryVideoView.visibility = View.VISIBLE
-        if (mediaController == null) {
-            mediaController = MediaController(requireContext()).apply {
-                setAnchorView(binding.entryVideoView)
-            }
-        }
-        mediaController?.setMediaPlayer(playerControl)
-
         pendingUri = uri
         val surface = currentSurface
         if (surface != null) {
@@ -262,16 +242,10 @@ class DictionaryDetailFragment : Fragment() {
                 setDataSource(requireContext(), uri)
                 // Loop the clip -- these are short (~4s) reference signs, and the
                 // whole point of watching one is to be able to rewatch it as many
-                // times as needed to learn the movement, without having to dig up
-                // the MediaController and tap play again every few seconds.
+                // times as needed to learn the movement. It just plays on repeat,
+                // no controls, nothing to tap.
                 isLooping = true
-                setOnPreparedListener { mp ->
-                    mp.start()
-                    mediaController?.let {
-                        it.setEnabled(true)
-                        it.show(3000)
-                    }
-                }
+                setOnPreparedListener { mp -> mp.start() }
                 setOnErrorListener { _, what, extra ->
                     Log.e("DictionaryDetail", "Video playback error: what=$what extra=$extra uri=$uri")
                     true // consume -- don't let the framework pop its own dialog
@@ -302,7 +276,6 @@ class DictionaryDetailFragment : Fragment() {
         releasePlayer()
         currentSurface?.release()
         currentSurface = null
-        mediaController = null
         pendingUri = null
         _binding = null
     }
