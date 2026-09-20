@@ -1,0 +1,76 @@
+SignTalk-mini -- 50-class bilingual (FSL+ASL) real-data model
+All 50 classes are now backed by real video + landmark data: FSL-105
+(De La Salle University / DOST, CC-BY-4.0) for the 25 FSL classes,
+ASL Citizen (Microsoft Research) for the 25 ASL classes.
+Small per-class sample count (~18-22 clips/class, ~4/class held out) --
+high accuracy here is an encouraging signal on this dataset/signer, not
+proof of generalization to new signers, lighting, or camera setups.
+
+Overall val accuracy: 0.9657
+Macro precision/recall/F1: 0.9433 / 0.9400 / 0.9344
+
+Top 6 most-confused class pairs (val split):
+  good_afternoon       predicted as married               x1
+  nice_to_meet_you     predicted as youre_welcome         x1
+  youre_welcome        predicted as thank_you             x1
+  father               predicted as mother                x1
+  girl                 predicted as sampu                 x1
+  girl                 predicted as itim                  x1
+
+Full per-class report:
+                  precision    recall  f1-score   support
+
+             isa       1.00      1.00      1.00         5
+          dalawa       1.00      1.00      1.00         5
+           tatlo       1.00      1.00      1.00         5
+            apat       1.00      1.00      1.00         5
+            lima       1.00      1.00      1.00         5
+            anim       1.00      1.00      1.00         5
+            pito       1.00      1.00      1.00         5
+            walo       1.00      1.00      1.00         5
+           siyam       1.00      1.00      1.00         5
+           sampu       0.83      1.00      0.91         5
+            asul       1.00      1.00      1.00         5
+           berde       1.00      1.00      1.00         5
+            pula       1.00      1.00      1.00         5
+      kayumanggi       1.00      1.00      1.00         5
+            itim       0.83      1.00      0.91         5
+            puti       1.00      1.00      1.00         5
+           dilaw       1.00      1.00      1.00         5
+           kahel       1.00      1.00      1.00         5
+             abo       1.00      1.00      1.00         5
+           rosas       1.00      1.00      1.00         5
+            lila       1.00      1.00      1.00         5
+       maliwanag       1.00      1.00      1.00         5
+ magandang_umaga       1.00      1.00      1.00         5
+ magandang_hapon       1.00      1.00      1.00         5
+  magandang_gabi       1.00      1.00      1.00         5
+    good_morning       1.00      1.00      1.00         2
+  good_afternoon       1.00      0.50      0.67         2
+    good_evening       1.00      1.00      1.00         2
+           hello       1.00      1.00      1.00         2
+     how_are_you       1.00      1.00      1.00         2
+         im_fine       1.00      1.00      1.00         2
+nice_to_meet_you       1.00      0.50      0.67         2
+       thank_you       0.67      1.00      0.80         2
+   youre_welcome       0.50      0.50      0.50         2
+see_you_tomorrow       1.00      1.00      1.00         2
+      understand       1.00      1.00      1.00         2
+ dont_understand       1.00      1.00      1.00         2
+            know       1.00      1.00      1.00         2
+       dont_know       1.00      1.00      1.00         2
+             yes       1.00      1.00      1.00         2
+              no       1.00      1.00      1.00         2
+           wrong       1.00      1.00      1.00         2
+         correct       1.00      1.00      1.00         2
+            slow       1.00      1.00      1.00         2
+            fast       1.00      1.00      1.00         2
+          father       1.00      0.50      0.67         2
+          mother       0.67      1.00      0.80         2
+             boy       1.00      1.00      1.00         2
+            girl       0.00      0.00      0.00         2
+         married       0.67      1.00      0.80         2
+
+        accuracy                           0.97       175
+       macro avg       0.94      0.94      0.93       175
+    weighted avg       0.96      0.97      0.96       175

@@ -22,10 +22,25 @@ class SignClassifier(private val context: Context) {
 
     companion object {
         private const val MODEL_ASSET = "sign_lstm.tflite"
+        // Hands-only model trained on aspect-corrected features (ai/dataset/fix_aspect.py).
+        // Optional: when this file is in assets/ it wins over every other model and the engine
+        // switches on aspect correction with it; delete it to fall back to the legacy models.
+        private const val ISO_MODEL_ASSET = "sign_lstm_iso.tflite"
+        private const val LOCATION_MODEL_ASSET = "sign_lstm_loc.tflite"
         private const val LABELS_ASSET = "labels.json"
         const val SEQUENCE_LENGTH = 30
         const val FEATURES_PER_FRAME = 126
+        const val FEATURES_WITH_LOCATION = 134
     }
+
+    /** Per-frame feature count of the loaded model: 126 (hands only) or 134 (hands + body location). */
+    var featuresPerFrame: Int = FEATURES_PER_FRAME
+        private set
+    val usesLocation: Boolean get() = featuresPerFrame == FEATURES_WITH_LOCATION
+
+    /** True when the loaded model expects aspect-corrected hand features (see LandmarkNormalizer). */
+    var usesAspectCorrection: Boolean = false
+        private set
 
     private var interpreter: Interpreter? = null
     var labelEntries: List<LabelEntry> = emptyList()
@@ -33,13 +48,33 @@ class SignClassifier(private val context: Context) {
     var isModelAvailable: Boolean = false
         private set
 
-    fun setup(): Boolean {
+    /**
+     * Loads the classifier. When [preferLocation] is true (the pose model is available) and
+     * `sign_lstm_loc.tflite` exists, that body-location-aware model is used; otherwise falls
+     * back to the original hands-only `sign_lstm.tflite`.
+     */
+    fun setup(preferLocation: Boolean = false): Boolean {
+        interpreter?.close()
+        interpreter = null
         labelEntries = loadLabels()
-        isModelAvailable = try {
-            interpreter = Interpreter(loadModelFile(MODEL_ASSET))
-            true
-        } catch (e: Exception) {
-            false
+        val candidates = buildList {
+            add(ISO_MODEL_ASSET)
+            if (preferLocation) add(LOCATION_MODEL_ASSET)
+            add(MODEL_ASSET)
+        }
+        isModelAvailable = false
+        for (asset in candidates) {
+            try {
+                val interp = Interpreter(loadModelFile(asset))
+                val shape = interp.getInputTensor(0).shape() // [1, 30, F]
+                interpreter = interp
+                featuresPerFrame = shape[2]
+                usesAspectCorrection = asset == ISO_MODEL_ASSET
+                isModelAvailable = true
+                break
+            } catch (e: Exception) {
+                // try the next candidate
+            }
         }
         return isModelAvailable
     }
@@ -67,14 +102,14 @@ class SignClassifier(private val context: Context) {
         val interp = interpreter ?: return null
         val numClasses = labelEntries.size
         if (numClasses == 0) return null
-        require(sequence.size == SEQUENCE_LENGTH * FEATURES_PER_FRAME) {
-            "Expected ${SEQUENCE_LENGTH * FEATURES_PER_FRAME} floats, got ${sequence.size}"
+        require(sequence.size == SEQUENCE_LENGTH * featuresPerFrame) {
+            "Expected ${SEQUENCE_LENGTH * featuresPerFrame} floats, got ${sequence.size}"
         }
 
-        val input = Array(1) { Array(SEQUENCE_LENGTH) { FloatArray(FEATURES_PER_FRAME) } }
+        val input = Array(1) { Array(SEQUENCE_LENGTH) { FloatArray(featuresPerFrame) } }
         for (t in 0 until SEQUENCE_LENGTH) {
-            for (f in 0 until FEATURES_PER_FRAME) {
-                input[0][t][f] = sequence[t * FEATURES_PER_FRAME + f]
+            for (f in 0 until featuresPerFrame) {
+                input[0][t][f] = sequence[t * featuresPerFrame + f]
             }
         }
         val output = Array(1) { FloatArray(numClasses) }

@@ -6,74 +6,70 @@ Small per-class sample count (~18-22 clips/class, ~4/class held out) --
 high accuracy here is an encouraging signal on this dataset/signer, not
 proof of generalization to new signers, lighting, or camera setups.
 
-Overall val accuracy: 0.9280
-Macro precision/recall/F1: 0.8630 / 0.8950 / 0.8707
+Overall val accuracy: 0.9657
+Macro precision/recall/F1: 0.9710 / 0.9520 / 0.9512
 
-Top 9 most-confused class pairs (val split):
-  apat                 predicted as pito                  x1
-  anim                 predicted as asul                  x1
-  pito                 predicted as apat                  x1
-  pito                 predicted as walo                  x1
-  berde                predicted as sampu                 x1
-  correct              predicted as fast                  x1
+Top 5 most-confused class pairs (val split):
+  magandang_gabi       predicted as magandang_hapon       x2
+  good_afternoon       predicted as married               x1
+  youre_welcome        predicted as good_evening          x1
   father               predicted as mother                x1
-  girl                 predicted as nice_to_meet_you      x1
-  married              predicted as nice_to_meet_you      x1
+  girl                 predicted as magandang_umaga       x1
 
 Full per-class report:
                   precision    recall  f1-score   support
 
-             isa       1.00      1.00      1.00         4
-          dalawa       1.00      1.00      1.00         4
-           tatlo       1.00      1.00      1.00         4
-            apat       0.75      0.75      0.75         4
-            lima       1.00      1.00      1.00         4
-            anim       1.00      0.75      0.86         4
-            pito       0.67      0.50      0.57         4
-            walo       0.80      1.00      0.89         4
-           siyam       1.00      1.00      1.00         4
-           sampu       0.80      1.00      0.89         4
-            asul       0.80      1.00      0.89         4
-           berde       1.00      0.75      0.86         4
-            pula       1.00      1.00      1.00         4
-      kayumanggi       1.00      1.00      1.00         4
-            itim       1.00      1.00      1.00         4
-            puti       1.00      1.00      1.00         4
-           dilaw       1.00      1.00      1.00         4
-           kahel       1.00      1.00      1.00         4
-             abo       1.00      1.00      1.00         4
-           rosas       1.00      1.00      1.00         4
-            lila       1.00      1.00      1.00         4
-       maliwanag       1.00      1.00      1.00         4
- magandang_umaga       1.00      1.00      1.00         4
- magandang_hapon       1.00      1.00      1.00         4
-  magandang_gabi       1.00      1.00      1.00         4
-    good_morning       1.00      1.00      1.00         1
-  good_afternoon       1.00      1.00      1.00         1
-    good_evening       1.00      1.00      1.00         1
-           hello       1.00      1.00      1.00         1
-     how_are_you       1.00      1.00      1.00         1
-         im_fine       1.00      1.00      1.00         1
-nice_to_meet_you       0.33      1.00      0.50         1
-       thank_you       1.00      1.00      1.00         1
-   youre_welcome       1.00      1.00      1.00         1
-see_you_tomorrow       1.00      1.00      1.00         1
-      understand       1.00      1.00      1.00         1
- dont_understand       1.00      1.00      1.00         1
-            know       1.00      1.00      1.00         1
-       dont_know       1.00      1.00      1.00         1
-             yes       1.00      1.00      1.00         1
-              no       1.00      1.00      1.00         1
-           wrong       1.00      1.00      1.00         1
-         correct       0.00      0.00      0.00         1
-            slow       1.00      1.00      1.00         1
-            fast       0.50      1.00      0.67         1
-          father       0.00      0.00      0.00         1
-          mother       0.50      1.00      0.67         1
-             boy       1.00      1.00      1.00         1
-            girl       0.00      0.00      0.00         1
-         married       0.00      0.00      0.00         1
+             isa       1.00      1.00      1.00         5
+          dalawa       1.00      1.00      1.00         5
+           tatlo       1.00      1.00      1.00         5
+            apat       1.00      1.00      1.00         5
+            lima       1.00      1.00      1.00         5
+            anim       1.00      1.00      1.00         5
+            pito       1.00      1.00      1.00         5
+            walo       1.00      1.00      1.00         5
+           siyam       1.00      1.00      1.00         5
+           sampu       1.00      1.00      1.00         5
+            asul       1.00      1.00      1.00         5
+           berde       1.00      1.00      1.00         5
+            pula       1.00      1.00      1.00         5
+      kayumanggi       1.00      1.00      1.00         5
+            itim       1.00      1.00      1.00         5
+            puti       1.00      1.00      1.00         5
+           dilaw       1.00      1.00      1.00         5
+           kahel       1.00      1.00      1.00         5
+             abo       1.00      1.00      1.00         5
+           rosas       1.00      1.00      1.00         5
+            lila       1.00      1.00      1.00         5
+       maliwanag       1.00      1.00      1.00         5
+ magandang_umaga       0.83      1.00      0.91         5
+ magandang_hapon       0.71      1.00      0.83         5
+  magandang_gabi       1.00      0.60      0.75         5
+    good_morning       1.00      1.00      1.00         2
+  good_afternoon       1.00      0.50      0.67         2
+    good_evening       0.67      1.00      0.80         2
+           hello       1.00      1.00      1.00         2
+     how_are_you       1.00      1.00      1.00         2
+         im_fine       1.00      1.00      1.00         2
+nice_to_meet_you       1.00      1.00      1.00         2
+       thank_you       1.00      1.00      1.00         2
+   youre_welcome       1.00      0.50      0.67         2
+see_you_tomorrow       1.00      1.00      1.00         2
+      understand       1.00      1.00      1.00         2
+ dont_understand       1.00      1.00      1.00         2
+            know       1.00      1.00      1.00         2
+       dont_know       1.00      1.00      1.00         2
+             yes       1.00      1.00      1.00         2
+              no       1.00      1.00      1.00         2
+           wrong       1.00      1.00      1.00         2
+         correct       1.00      1.00      1.00         2
+            slow       1.00      1.00      1.00         2
+            fast       1.00      1.00      1.00         2
+          father       1.00      0.50      0.67         2
+          mother       0.67      1.00      0.80         2
+             boy       1.00      1.00      1.00         2
+            girl       1.00      0.50      0.67         2
+         married       0.67      1.00      0.80         2
 
-        accuracy                           0.93       125
-       macro avg       0.86      0.90      0.87       125
-    weighted avg       0.92      0.93      0.92       125
+        accuracy                           0.97       175
+       macro avg       0.97      0.95      0.95       175
+    weighted avg       0.98      0.97      0.96       175

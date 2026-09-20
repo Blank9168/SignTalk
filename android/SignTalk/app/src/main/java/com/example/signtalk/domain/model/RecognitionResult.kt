@@ -12,6 +12,7 @@ data class RecognitionResult(
 sealed interface RecognitionState {
     data object Initializing : RecognitionState
     data object WaitingForHands : RecognitionState
+    data object WaitingForBody : RecognitionState
     data class Buffering(val framesCollected: Int, val framesNeeded: Int) : RecognitionState
     data class Recognized(val result: RecognitionResult) : RecognitionState
     data object NotRecognized : RecognitionState

@@ -12,6 +12,7 @@ import com.example.signtalk.domain.repository.AppSettings
 import com.example.signtalk.domain.repository.SettingsRepository
 import com.example.signtalk.recognition.RecognitionEngine
 import com.example.signtalk.recognition.SpeechOutput
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -59,10 +60,17 @@ class RecognitionViewModel(
                 if (state is RecognitionState.Recognized) {
                     maybeSpeak(state.result.displayName, state.result.label)
                     maybeLogRecognition(state.result)
+                } else if (state is RecognitionState.WaitingForHands) {
+                    // Hands left the frame: signing the same word again is a new sign.
+                    // (Previously it was silently ignored until the screen was reset.)
+                    lastSpokenLabel = null
+                    lastLoggedLabel = null
                 }
             }
         }
-        engine.setup()
+        // Model loading (TFLite + MediaPipe, GPU init) is heavy; doing it on the main thread froze
+        // the screen on "Starting recognition...". Frames are ignored until setup finishes.
+        viewModelScope.launch(Dispatchers.Default) { engine.setup() }
     }
 
     private fun maybeSpeak(displayName: String, label: String) {

@@ -97,6 +97,9 @@ class RecognitionFragment : Fragment() {
         binding.statusSubtitle.visibility = View.GONE
         binding.confidenceGroup.visibility = View.GONE
         binding.statusTitle.setTextColor(defaultTextColor())
+        // The recognized word is the output people read from across a room: make it huge
+        // (auto-shrinks only if a long label would not fit on two lines). Status messages stay small.
+        setTitleSizeRange(big = state is RecognitionState.Recognized)
 
         when (state) {
             is RecognitionState.Initializing -> {
@@ -118,6 +121,9 @@ class RecognitionFragment : Fragment() {
             }
             is RecognitionState.WaitingForHands -> {
                 binding.statusTitle.text = "Show a hand sign to the camera"
+            }
+            is RecognitionState.WaitingForBody -> {
+                binding.statusTitle.text = "Step back so your head and shoulders are visible"
             }
             is RecognitionState.Buffering -> {
                 binding.statusTitle.text = "Reading gesture..."
@@ -141,6 +147,13 @@ class RecognitionFragment : Fragment() {
                 binding.confidenceGroup.visibility = View.VISIBLE
             }
         }
+    }
+
+    private fun setTitleSizeRange(big: Boolean) {
+        val (minSp, maxSp) = if (big) 36 to 72 else 18 to 24
+        androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+            binding.statusTitle, minSp, maxSp, 2, android.util.TypedValue.COMPLEX_UNIT_SP
+        )
     }
 
     private fun defaultTextColor(): Int = resolveThemeColor(com.google.android.material.R.attr.colorOnSurface)

@@ -38,6 +38,7 @@ LABELS_PATH = os.path.join(os.path.dirname(__file__), "..", "dataset", "labels_5
 SEQUENCE_LENGTH = 30
 VOTE_WINDOW = 15          # number of recent predictions to majority-vote over
 CONFIDENCE_THRESHOLD = 0.6
+HAND_LOST_GRACE_FRAMES = 8  # same as RecognitionEngine.handLostGraceFrames on Android
 
 
 def load_label_order():
@@ -67,6 +68,7 @@ def main():
     vote_buffer = deque(maxlen=VOTE_WINDOW)
     last_logged = None
     frame_count = 0
+    missed_hand_frames = 0
 
     print(f"Press 'q' to quit. Recognizing {len(LABEL_ORDER)} FSL-105 signs, all backed "
           "by real Filipino Sign Language video data -- see README for the full list "
@@ -91,7 +93,18 @@ def main():
             # to look at while not messing with what the model sees.
             features = extractor.extract(frame)
             hand_detected = bool(np.any(features != 0))
-            frame_buffer.append(features)
+            # Training sequences contain hand-visible frames only (see
+            # landmarks.trim_to_hand_frames) and the Android app never pushes
+            # empty frames either. Pushing zero-filled frames here made this script
+            # disagree with both (~65% instead of ~93% on the same signs).
+            if hand_detected:
+                missed_hand_frames = 0
+                frame_buffer.append(features)
+            else:
+                missed_hand_frames += 1
+                if missed_hand_frames > HAND_LOST_GRACE_FRAMES:
+                    frame_buffer.clear()
+                    vote_buffer.clear()
             frame = cv2.flip(frame, 1)  # display-only, after extraction
 
             display_text = "collecting frames..."
@@ -104,12 +117,17 @@ def main():
                 confidence = probs[pred_idx].item()
 
                 if confidence >= CONFIDENCE_THRESHOLD:
-                    vote_buffer.append(pred_idx)
+                    vote_buffer.append((pred_idx, confidence))
+                elif vote_buffer:
+                    vote_buffer.popleft()  # let stale votes expire instead of freezing the label
 
                 if vote_buffer:
-                    majority_idx, count = Counter(vote_buffer).most_common(1)[0]
+                    majority_idx, count = Counter(i for i, _ in vote_buffer).most_common(1)[0]
                     label = LABEL_ORDER[majority_idx]
-                    display_text = f"{label}  {confidence*100:.0f}%"
+                    # confidence of the label being SHOWN (mean over its votes), not of
+                    # whatever the latest frame happened to predict
+                    voted_conf = float(np.mean([c for i, c in vote_buffer if i == majority_idx]))
+                    display_text = f"{label}  {voted_conf*100:.0f}%"
                 else:
                     display_text = "no confident sign detected"
 

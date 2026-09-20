@@ -26,6 +26,15 @@ class SequenceBuffer(
         }
     }
 
+    /** Pushes a fully built frame (already [featuresPerFrame] floats), e.g. hands + body-location features. */
+    fun pushFrame(frame: FloatArray) {
+        require(frame.size == featuresPerFrame) { "Expected $featuresPerFrame floats, got ${frame.size}" }
+        frames.addLast(frame)
+        while (frames.size > sequenceLength) {
+            frames.removeFirst()
+        }
+    }
+
     fun clear() = frames.clear()
 
     /** Flattened (sequenceLength * featuresPerFrame) array, oldest frame first, or null if not full. */

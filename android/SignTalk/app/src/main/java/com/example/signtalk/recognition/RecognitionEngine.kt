@@ -43,36 +43,36 @@ class RecognitionEngine(
 
     private val handLandmarkerHelper = HandLandmarkerHelper(context, this)
     private val classifier = SignClassifier(context)
-    private val sequenceBuffer = SequenceBuffer(
+    // Tracks nose/shoulders so hand LOCATION (forehead vs chin, etc.) can be a model feature.
+    // Only used when both pose_landmarker.task and sign_lstm_loc.tflite are present; otherwise
+    // the engine behaves exactly like before (hands-only model).
+    private val bodyTracker = BodyReferenceTracker(context)
+
+    // Re-created in setup() once the loaded model's per-frame feature count (126 or 134) is known.
+    private var sequenceBuffer = SequenceBuffer(
         sequenceLength = SignClassifier.SEQUENCE_LENGTH,
         featuresPerFrame = SignClassifier.FEATURES_PER_FRAME
     )
 
-    private val voteWindow = ArrayDeque<Int>()
-    private val voteWindowSize = 5
+    @Volatile private var frameWidth = 0
+    @Volatile private var frameHeight = 0
+
+    // (class index, confidence) of the recent confident predictions
+    private val voteWindow = ArrayDeque<Pair<Int, Float>>()
+    // Small window = the label follows a new sign quickly (5 kept the old sign on screen for ~4 frames).
+    private val voteWindowSize = 3
 
     /**
-     * Start classifying once this many *real* frames are collected, instead of waiting for
-     * a full [SignClassifier.SEQUENCE_LENGTH]. Until then, [SequenceBuffer.toFlatArrayResampled]
-     * uniformly resamples whatever real frames exist to fill the window; the resampled
-     * source points shift toward more real data (and away from repeats) every subsequent
-     * frame, so the prediction keeps refining -- this only affects how soon the *first*
-     * result can appear, not the steady-state window once it fills.
-     *
-     * 2/3 of the full window is a deliberately *not* pushed lower than the latency fix that
-     * introduced it originally used, specifically because of signs with real motion in
-     * them (a swipe, a two-part handshape change, etc.): at 2/3, the model is at least
-     * seeing a resampled view of a real majority of whatever's happened so far, and a
-     * partial/in-progress motion is far more likely to fall under the confidence threshold
-     * (see [confidenceThreshold]) and correctly show as "not recognized" rather than lock
-     * onto a wrong guess -- the 5-prediction majority vote then catches up to the right
-     * answer once the window is genuinely complete a few frames later. Pushing this lower
-     * would trade a bit more perceived speed for classifying on proportionally less of the
-     * gesture, which is the wrong direction for motion signs specifically -- there's no
-     * on-device signal for "is the sign being performed right now static or dynamic" to
-     * lower it selectively, so this stays a single conservative threshold for all classes.
+     * Start classifying as soon as this many *real* hand frames exist (~0.4 s), instead of
+     * waiting for a fuller window. The frames collected so far are uniformly resampled to the
+     * model's 30 slots ([SequenceBuffer.toFlatArrayResampled]) and the prediction keeps
+     * refining as more frames arrive. The model is trained on partial signs (`_prefix`
+     * augmentation in ai/training/dataset.py), so early predictions are usable: on held-out
+     * phone clips 12 frames gave ~80% (15 -> ~91%, 20 -> ~95%, full window ~98%). Predictions
+     * below [confidenceThreshold] never show, so the uncertain early ones stay hidden rather
+     * than flashing a wrong word.
      */
-    private val minFramesForPrediction = (SignClassifier.SEQUENCE_LENGTH * 2 / 3)
+    private val minFramesForPrediction = 12
 
     /**
      * How many consecutive no-hand-detected frames are tolerated before the sequence buffer
@@ -88,7 +88,7 @@ class RecognitionEngine(
     val state: StateFlow<RecognitionState> = _state.asStateFlow()
 
     private var useMockRecognition: Boolean = false
-    private var isSetUp = false
+    @Volatile private var isSetUp = false
 
     fun setConfidenceThreshold(threshold: Float) {
         confidenceThreshold = threshold
@@ -101,7 +101,18 @@ class RecognitionEngine(
     }
 
     fun setup() {
-        classifier.setup()
+        // Load the classifier first. The pose model (body location) is only needed by the
+        // legacy location model, so a hands-only model (e.g. sign_lstm_iso.tflite) skips
+        // loading it -- that was a large part of the "Starting recognition..." wait.
+        classifier.setup(preferLocation = true)
+        if (classifier.usesLocation) {
+            bodyTracker.setup()
+            if (!bodyTracker.isAvailable) classifier.setup(preferLocation = false)
+        }
+        sequenceBuffer = SequenceBuffer(
+            sequenceLength = SignClassifier.SEQUENCE_LENGTH,
+            featuresPerFrame = classifier.featuresPerFrame
+        )
         handLandmarkerHelper.setup()
         isSetUp = true
         refreshAvailability()
@@ -129,7 +140,11 @@ class RecognitionEngine(
 
     fun processFrame(bitmapProvider: () -> android.graphics.Bitmap, timestampMs: Long) {
         if (!handLandmarkerHelper.isModelAvailable) return
-        handLandmarkerHelper.detectAsync(bitmapProvider(), timestampMs)
+        val bitmap = bitmapProvider()
+        frameWidth = bitmap.width
+        frameHeight = bitmap.height
+        if (classifier.usesLocation) bodyTracker.update(bitmap)
+        handLandmarkerHelper.detectAsync(bitmap, timestampMs)
     }
 
     override fun onResult(result: HandLandmarkerResult) {
@@ -149,15 +164,34 @@ class RecognitionEngine(
         }
         missedHandFrames = 0
 
+        // Aspect-corrected model: hand shapes must be measured in isotropic units (see
+        // LandmarkNormalizer.normalizeHand). Legacy models were trained without it.
+        val aspect = if (classifier.usesAspectCorrection && frameHeight > 0) {
+            frameWidth.toFloat() / frameHeight
+        } else {
+            1f
+        }
+
         var leftHand = LandmarkNormalizer.emptyHand()
         var rightHand = LandmarkNormalizer.emptyHand()
+        var leftLoc = LandmarkNormalizer.emptyLocation()
+        var rightLoc = LandmarkNormalizer.emptyLocation()
+
+        val useLocation = classifier.usesLocation
+        val body = bodyTracker.reference
+        if (useLocation && (body == null || frameWidth == 0 || frameHeight == 0)) {
+            // Location-aware model needs the signer's head/shoulders in view first.
+            _state.value = RecognitionState.WaitingForBody
+            return
+        }
 
         if (result.landmarks().size == 1) {
             // Canonicalize: with exactly one hand visible, always place it in the LEFT
             // feature slot, regardless of what MediaPipe's own handedness classifier calls
             // it for this frame. This is deliberate, not an oversight -- a direct check of
             // every ai/dataset/raw/<class>/*.npy training sample (every class, not just
-            // numbers) found ZERO samples with the visible hand in the right-only slot. The
+            // numbers) found no FSL/user samples with the visible hand in the right-only slot
+            // (2026-09-21 re-check: 20 ASL Citizen clips are right-slot-only -- the only exceptions). The
             // training pipeline's single FSL-105 signer's one-handed signs all ended up
             // labeled "Left" by MediaPipe (see project notes: this lines up with MediaPipe's
             // own documented "handedness is determined assuming the input image is
@@ -171,21 +205,55 @@ class RecognitionEngine(
             // worse than the previous label-trusting behavior, since the model was never
             // meaningfully trained on right-slot-only input, and it removes "which hand you
             // signed with" as a variable for one-handed signs entirely.
-            leftHand = LandmarkNormalizer.normalizeHand(result.landmarks()[0])
+            leftHand = LandmarkNormalizer.normalizeHand(result.landmarks()[0], aspect)
+            if (useLocation && body != null) {
+                leftLoc = LandmarkNormalizer.handLocation(result.landmarks()[0], frameWidth, frameHeight, body)
+            }
         } else {
             // Two (or more) hands detected -- both feature slots are meaningfully in play
             // (e.g. two-handed signs like "married"/"bread"/"coffee" in this dataset), so
             // trust MediaPipe's own per-hand Left/Right label here same as before; there's
             // no evidence (unlike the one-hand case above) that this assignment is wrong.
             val handedness = result.handedness()
-            for (i in result.landmarks().indices) {
-                val label = handedness.getOrNull(i)?.firstOrNull()?.categoryName() ?: continue
-                val normalized = LandmarkNormalizer.normalizeHand(result.landmarks()[i])
-                if (label.equals("Left", ignoreCase = true)) leftHand = normalized else rightHand = normalized
+            val labels = result.landmarks().indices.map { handedness.getOrNull(it)?.firstOrNull()?.categoryName() }
+            // MediaPipe sometimes labels both hands the same; the loop below would then let the
+            // second hand overwrite the first and the model would see one hand instead of two.
+            // Fall back to image position (smaller wrist x -> "Left" slot, as in landmarks.py).
+            val slotted: List<Pair<Int, String>> =
+                if (result.landmarks().size == 2 && labels[0] != null && labels[0] == labels[1]) {
+                    result.landmarks().indices.sortedBy { result.landmarks()[it][0].x() }
+                        .mapIndexed { rank, i -> i to (if (rank == 0) "Left" else "Right") }
+                } else {
+                    result.landmarks().indices.mapNotNull { i -> labels[i]?.let { i to it } }
+                }
+            for ((i, label) in slotted) {
+                val normalized = LandmarkNormalizer.normalizeHand(result.landmarks()[i], aspect)
+                val loc = if (useLocation && body != null) {
+                    LandmarkNormalizer.handLocation(result.landmarks()[i], frameWidth, frameHeight, body)
+                } else {
+                    LandmarkNormalizer.emptyLocation()
+                }
+                if (label.equals("Left", ignoreCase = true)) {
+                    leftHand = normalized
+                    leftLoc = loc
+                } else {
+                    rightHand = normalized
+                    rightLoc = loc
+                }
             }
         }
 
-        sequenceBuffer.push(leftHand, rightHand)
+        if (useLocation) {
+            // Frame layout must match training: [left hand 63][right hand 63][left loc 4][right loc 4].
+            val frame = FloatArray(SignClassifier.FEATURES_WITH_LOCATION)
+            leftHand.copyInto(frame, 0)
+            rightHand.copyInto(frame, 63)
+            leftLoc.copyInto(frame, 126)
+            rightLoc.copyInto(frame, 130)
+            sequenceBuffer.pushFrame(frame)
+        } else {
+            sequenceBuffer.push(leftHand, rightHand)
+        }
 
         val sequence = sequenceBuffer.toFlatArrayResampled(minFramesForPrediction)
         if (sequence == null) {
@@ -200,15 +268,28 @@ class RecognitionEngine(
         }
 
         val (classIndex, confidence) = prediction
-        voteWindow.addLast(classIndex)
-        while (voteWindow.size > voteWindowSize) voteWindow.removeFirst()
-        val votedIndex = voteWindow.groupingBy { it }.eachCount().maxByOrNull { it.value }?.key ?: classIndex
-
-        val entry = classifier.labelEntries.getOrNull(votedIndex)
-        _state.value = if (entry != null && confidence >= confidenceThreshold) {
+        // Only confident predictions vote (same as ai/evaluation/predict.py); a low-confidence
+        // frame lets the oldest vote expire instead of voting for a guess.
+        if (confidence >= confidenceThreshold) {
+            voteWindow.addLast(classIndex to confidence)
+            while (voteWindow.size > voteWindowSize) voteWindow.removeFirst()
+        } else if (voteWindow.isNotEmpty()) {
+            voteWindow.removeFirst()
+        }
+        // Report the confidence of the label actually shown (mean over its votes). Before, the
+        // label came from the vote but the confidence from the latest frame, which could be a
+        // different class.
+        val winner = voteWindow.groupBy { it.first }.maxByOrNull { it.value.size }
+        val entry = winner?.let { classifier.labelEntries.getOrNull(it.key) }
+        _state.value = if (winner != null && entry != null) {
+            val votedConfidence = winner.value.map { it.second }.average().toFloat()
             RecognitionState.Recognized(
-                RecognitionResult(entry.label, entry.displayName, confidence, System.currentTimeMillis())
+                RecognitionResult(entry.label, entry.displayName, votedConfidence, System.currentTimeMillis())
             )
+        } else if (sequenceBuffer.size < SignClassifier.SEQUENCE_LENGTH) {
+            // Still early in the sign and nothing is confident yet: keep "reading" instead of
+            // flashing "Gesture not recognized" before the model has seen the whole sign.
+            RecognitionState.Buffering(sequenceBuffer.size, SignClassifier.SEQUENCE_LENGTH)
         } else {
             RecognitionState.NotRecognized
         }
@@ -229,6 +310,7 @@ class RecognitionEngine(
     fun labelEntries(): List<LabelEntry> = classifier.labelEntries
 
     fun reset() {
+        bodyTracker.reset()
         sequenceBuffer.clear()
         voteWindow.clear()
         missedHandFrames = 0
@@ -236,6 +318,7 @@ class RecognitionEngine(
 
     fun close() {
         handLandmarkerHelper.close()
+        bodyTracker.close()
         classifier.close()
     }
 }

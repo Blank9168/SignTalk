@@ -45,19 +45,24 @@
     <LinearLayout
         android:id="@+id/recognitionGroup"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:visibility="gone">
 
+        <!-- Camera takes whatever height is left above the output text. fitCenter shows the whole
+             analysed frame (no cropping), so a hand at the edge of the frame is still visible. -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
             <androidx.camera.view.PreviewView
                 android:id="@+id/previewView"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="3:4"
+                app:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -74,9 +79,16 @@
                 android:id="@+id/statusTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="112dp"
                 android:gravity="center"
+                android:maxLines="2"
                 android:text="Starting recognition..."
-                android:textAppearance="?attr/textAppearanceTitleMedium" />
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textStyle="bold"
+                app:autoSizeMaxTextSize="24sp"
+                app:autoSizeMinTextSize="18sp"
+                app:autoSizeStepGranularity="2sp"
+                app:autoSizeTextType="uniform" />
 
             <TextView
                 android:id="@+id/statusSubtitle"

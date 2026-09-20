@@ -61,7 +61,15 @@ sys.path.append(os.path.join(os.path.dirname(__file__), "..", "models"))
 from dataset import SignDataset  # local (training/dataset.py), sys.path appended, not shadowed
 from model import SignLSTM
 
-RAW_DIR = os.path.join(os.path.dirname(__file__), "..", "dataset", "raw")
+# raw_iso/ = raw/ converted to aspect-corrected features by dataset/fix_aspect.py
+# (see normalize_hand in dataset/landmarks.py). Falls back to raw/ only if it has
+# not been generated -- but a model trained on raw/ does NOT match the corrected
+# feature space and will not transfer to phone cameras.
+_DATASET_DIR = os.path.join(os.path.dirname(__file__), "..", "dataset")
+RAW_DIR = os.path.join(_DATASET_DIR, "raw_iso")
+if not os.path.isdir(RAW_DIR):
+    print("WARNING: dataset/raw_iso not found -- run dataset/fix_aspect.py first. Using raw/ (distorted aspect).")
+    RAW_DIR = os.path.join(_DATASET_DIR, "raw")
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "models")
 LABELS_PATH = os.path.join(os.path.dirname(__file__), "..", "dataset", "labels_50.json")
 
@@ -91,8 +99,33 @@ def set_seed(seed):
     torch.manual_seed(seed)
 
 
+def drop_bad_clips(samples):
+    """Remove clips that would poison training: (a) byte-identical clips filed under
+    different labels (FSL-105 has four/6 == seven/7 and four/8 == seven/9, which is
+    why apat<->pito was the top confusion) and (b) clips with no detected hand at all
+    (walo/7 is an all-zero sequence labelled 'walo')."""
+    import hashlib
+    by_hash = {}
+    for path, label in samples:
+        with open(path, "rb") as f:
+            by_hash.setdefault(hashlib.md5(f.read()).hexdigest(), []).append((path, label))
+    bad = set()
+    for group in by_hash.values():
+        if len({label for _, label in group}) > 1:
+            bad.update(p for p, _ in group)
+    kept, dropped = [], 0
+    for path, label in samples:
+        if path in bad or not np.any(np.load(path)):
+            dropped += 1
+            continue
+        kept.append((path, label))
+    print(f"dropped {dropped} conflicting/empty clips")
+    return kept
+
+
 def build_datasets():
     full_clean = SignDataset(RAW_DIR, LABEL_ORDER, augment=False)
+    full_clean.base_samples = drop_bad_clips(full_clean.base_samples)
 
     # Stratified split: with only ~18-22 samples per class, a plain random
     # split can leave some classes with zero val examples. Split per class
@@ -166,7 +199,7 @@ def main():
     val_loader = DataLoader(val_ds, batch_size=BATCH_SIZE, shuffle=False)
 
     model = SignLSTM(num_classes=len(LABEL_ORDER)).to(device)
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
     optimizer = torch.optim.Adam(model.parameters(), lr=LR, weight_decay=1e-4)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=5)
 

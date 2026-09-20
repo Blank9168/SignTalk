@@ -60,14 +60,16 @@
     "source": "FSL-105 (De La Salle University / DOST, CC-BY-4.0) + ASL Citizen (Microsoft Research)",
     "license": "CC-BY-4.0 (FSL-105) / see ASL Citizen terms",
     "url": "https://data.mendeley.com/datasets/48y2y99mb9/2 ; https://www.microsoft.com/en-us/research/project/asl-citizen/",
-    "clips_used": 644,
+    "clips_used": 889,
     "classes_with_data": 50,
     "classes_total": 50
   },
-  "overall_val_accuracy": 0.928,
-  "macro_precision": 0.863,
-  "macro_recall": 0.895,
-  "macro_f1": 0.8707142857142859,
-  "best_val_loss": 0.2516950559616089,
-  "epochs_trained": 24
+  "overall_val_accuracy": 0.9657142857142857,
+  "macro_precision": 0.9709523809523809,
+  "macro_recall": 0.9520000000000001,
+  "macro_f1": 0.9511818181818181,
+  "best_val_loss": 0.806895877293178,
+  "epochs_trained": 61,
+  "feature_space": "aspect-corrected hand landmarks (landmarks.normalize_hand with frame aspect); requires app assets/sign_lstm_iso.tflite",
+  "training": "train.py: label smoothing 0.1, wide augmentation (rotate/scale/aniso/crop/hand-drop/prefix), 889 clips incl. 250 phone clips, duplicates removed"
 }
