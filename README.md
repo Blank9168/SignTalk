@@ -23,6 +23,22 @@ during development:
   — 2 hands × 21 landmarks × xyz) per frame → 30-frame sequences → a
   bidirectional LSTM classifier. No raw-image CNN, no background
   subtraction — MediaPipe's landmarker handles hand localization.
+- **Aspect-corrected features:** MediaPipe normalizes landmarks by frame
+  width/height, which squashes hand shapes differently for landscape and
+  portrait video. Landmarks are now aspect-corrected (`landmarks.normalize_hand`),
+  and the existing clips were converted into `ai/dataset/raw_iso/` with
+  `ai/dataset/fix_aspect.py`. This is the feature space the app's
+  `sign_lstm_iso.tflite` model expects.
+- **Body-location awareness:** hand shape alone can't tell signs apart by
+  *where* they are made (forehead vs. chin, chest vs. waist). The app tracks
+  the signer's nose and shoulders with MediaPipe's PoseLandmarker
+  (`BodyReferenceTracker`) and, when `pose_landmarker.task` is present, uses
+  `sign_lstm_loc.tflite` (134 features per frame: 126 hand + 8 body-location).
+  If the pose model is missing, it falls back to the hand-shape-only model.
+- **Current model:** bidirectional LSTM, 50 classes, trained on 889 clips
+  (including 250 recorded on phones by the team). Validation accuracy
+  ≈ 96.6% (macro F1 ≈ 0.95). See `ai/models/metadata.json` and
+  `classification_report.txt`.
 - **Mobile UI:** Kotlin with Fragments + XML Views + Jetpack Navigation
   Component (not Compose) — a deliberate pivot made before this repo's
   current state.
@@ -38,14 +54,15 @@ SignTalk/
 ├── android/SignTalk/       Android app (Kotlin, Views + Navigation Component)
 │   └── app/src/main/
 │       ├── java/.../ui/dictionary/   FSL/ASL dictionary (50 signs, video playback)
-│       ├── java/.../recognition/     Camera + MediaPipe + LSTM inference (Sign-to-Text)
+│       ├── java/.../recognition/     Camera + MediaPipe hands/pose + LSTM inference (Sign-to-Text)
 │       ├── java/.../data/remote/     Retrofit client for the backend API
 │       └── assets/sign_videos/       Bundled reference clips, one per dictionary entry
 ├── backend/sign-talk-api/  Node.js/Express + MongoDB API
 │   └── src/                Dictionary CRUD, user sync, recognition logs, model version info
 ├── ai/                     Python training/inference pipeline
 │   ├── dataset/             Data collection, import, and extracted landmark samples
-│   ├── training/            SignLSTM training (dataset.py, train.py)
+│   │                        (raw/ = original, raw_iso/ = aspect-corrected)
+│   ├── training/            SignLSTM training (dataset.py, train.py, location/ experiments)
 │   ├── evaluation/          Live webcam inference / video prediction
 │   └── models/              Trained model artifacts (sign_lstm.pt, metadata.json, etc.)
 └── archive/                Retired features (kept, not deleted — see each folder's own README)
@@ -58,6 +75,13 @@ Basic Responses, Family, People & Relationships). All 50 have real training
 footage and a real bundled reference video in the dictionary — see
 `android/SignTalk/app/src/main/java/com/example/signtalk/data/dictionary/DictionarySeed.kt`
 for the exact list.
+
+## Dataset credits
+
+Training data combines clips recorded by the team with two public datasets:
+FSL-105 (De La Salle University / DOST, CC-BY-4.0) and ASL Citizen
+(Microsoft Research). See `ai/models/metadata.json` for links and license
+notes.
 
 ## Getting started
 
