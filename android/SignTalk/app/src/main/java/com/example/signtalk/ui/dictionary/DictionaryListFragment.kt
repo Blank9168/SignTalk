@@ -61,10 +61,6 @@ class DictionaryListFragment : Fragment() {
             viewModel.onQueryChange(text?.toString().orEmpty())
         }
 
-        binding.addEntryFab.setOnClickListener {
-            AddDictionaryEntryDialogFragment().show(childFragmentManager, "add_dictionary_entry")
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.entries.collect { entries ->
