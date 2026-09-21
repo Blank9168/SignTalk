@@ -49,8 +49,10 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
+            // Home draws its own "SignTalk" header (title, tagline, settings),
+            // so the shared toolbar would just repeat the app name there.
             binding.toolbar.visibility =
-                if (destination.id == R.id.splashFragment) View.GONE else View.VISIBLE
+                if (destination.id == R.id.splashFragment || destination.id == R.id.homeFragment) View.GONE else View.VISIBLE
         }
     }
 

@@ -152,7 +152,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="SignTalk -- AI-Based Recognition of Selected Filipino Sign Language Gestures with Text and Speech Output. A BSIT capstone project by Farre, Sapnu, and Tolentino, advised by Erl Xander G. Labung."
+            android:text="SignTalk -- AI-Based Recognition of Selected Filipino Sign Language Gestures with Text and Speech Output. A BSIT capstone project by Angelica C. Farre, Joshua M. Sapnu, and John Luis E. Tolentino, advised by Erl Xander G. Labung."
             android:textAppearance="?attr/textAppearanceBodyMedium" />
 
         <TextView
