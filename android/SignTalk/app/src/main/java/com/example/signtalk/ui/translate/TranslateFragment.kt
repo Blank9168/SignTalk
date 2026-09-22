@@ -76,6 +76,13 @@ class TranslateFragment : Fragment() {
     private var pendingUri: Uri? = null
     private var pendingAutoAdvance: Boolean = true
     private var currentSurface: Surface? = null
+    // Identifies which sign is currently bound/playing so a fresh translate()
+    // call (a brand-new tokens list, even one that happens to land back on
+    // index 0) is always detected as "different sign" -- comparing currentIndex
+    // alone isn't enough, since two unrelated single-word results both sit at
+    // index 0 and would otherwise look unchanged, leaving the old clip playing
+    // under the new sign's label.
+    private var playingTokens: List<TranslationToken>? = null
     private var playingTokenIndex: Int = -1
     private var advanceJob: Job? = null
 
@@ -257,7 +264,8 @@ class TranslateFragment : Fragment() {
         binding.replayButton.visibility =
             if (isLastSign && matchedIndices.size > 1) View.VISIBLE else View.GONE
 
-        if (playingTokenIndex != state.currentIndex) {
+        if (playingTokens !== state.tokens || playingTokenIndex != state.currentIndex) {
+            playingTokens = state.tokens
             playingTokenIndex = state.currentIndex
             bindVideo(currentToken.entry, isLastSign)
         }
@@ -372,6 +380,7 @@ class TranslateFragment : Fragment() {
 
     private fun stopAndClearVideo() {
         stopVideoOnly()
+        playingTokens = null
         playingTokenIndex = -1
         binding.signEmojiFallback.visibility = View.GONE
     }
