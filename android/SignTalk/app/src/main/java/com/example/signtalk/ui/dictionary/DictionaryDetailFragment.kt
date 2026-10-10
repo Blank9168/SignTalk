@@ -1,91 +1,43 @@
 package com.example.signtalk.ui.dictionary
 
 import android.content.Intent
-import android.graphics.SurfaceTexture
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.Surface
-import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.signtalk.SignTalkApp
 import com.example.signtalk.databinding.FragmentDictionaryDetailBinding
 import com.example.signtalk.domain.model.DictionaryEntry
-import com.example.signtalk.ui.common.fitVideo
-import kotlinx.coroutines.Dispatchers
+import com.example.signtalk.domain.model.ValidationStatus
+import com.example.signtalk.ui.common.SignVideoPlayer
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.IOException
 
+/**
+ * One sign: its reference video (looping, with Replay and 0.5x Slow), how to sign it, and an
+ * "About this sign" card that keeps the sign's gloss separate from its English and Filipino
+ * meanings and shows sign type, hands, source and validation status.
+ *
+ * Video playback uses [SignVideoPlayer] (TextureView + MediaPlayer; a SurfaceView-based
+ * VideoView rendered as a black box inside Fragments).
+ */
 class DictionaryDetailFragment : Fragment() {
 
     private var _binding: FragmentDictionaryDetailBinding? = null
     private val binding get() = _binding!!
 
     private var entryId: Long = 0L
+    private var player: SignVideoPlayer? = null
 
-    // --- Video playback (TextureView + raw MediaPlayer) ---
-    //
-    // NOTE (fix, 2026-09-07 round 2): this used to be a plain android.widget.
-    // VideoView, which draws via an internal SurfaceView. SurfaceView
-    // composites through its own separate window-manager-positioned surface
-    // rather than through the normal View drawing pass, and it's a
-    // long-documented source of "shows a black box, no error, sometimes no
-    // audio either" failures specifically when hosted inside a Fragment
-    // (as opposed to directly in an Activity) -- the surface can end up
-    // positioned/composited against a stale or not-yet-ready window frame.
-    // Fixing the earlier file:///android_asset/ Uri bug (see git history /
-    // project notes) made the video *loadable*, but this separate,
-    // unrelated SurfaceView-in-Fragment issue is what was still blocking it
-    // from actually being visible. TextureView draws through the normal
-    // View hierarchy (like an ImageView would) and doesn't have this class
-    // of bug, so it's used here instead.
-    //
-    // NOTE (2026-09-10): the MediaController tap-to-show play/pause/seek
-    // overlay has been removed. Each clip just autoplays and loops on its
-    // own with no controls at all -- rewatching a sign is "look at it
-    // again", not "find the button".
-    private var mediaPlayer: MediaPlayer? = null
-    private var pendingUri: Uri? = null
-    private var currentSurface: Surface? = null
-
-    private val surfaceTextureListener = object : TextureView.SurfaceTextureListener {
-        override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
-            currentSurface = Surface(surface)
-            pendingUri?.let { startPlayback(it) }
-        }
-
-        override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture, width: Int, height: Int) {}
-
-        override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
-            releasePlayer()
-            currentSurface?.release()
-            currentSurface = null
-            return true
-        }
-
-        override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
-    }
-
-    // Lets a *custom* entry (one with no bundled FSL-105 clip -- see bindVideo
-    // below) get a video attached or replaced. Uses ACTION_OPEN_DOCUMENT (via
-    // this contract) rather than GET_CONTENT specifically because it's the
-    // one that lets us take a *persistable* read permission below --
-    // GET_CONTENT's grant only lasts the current app process, so the URI
-    // would stop resolving the next time the app is launched and this sign is
-    // viewed again. Registered as a property (runs during the fragment's
-    // construction) rather than inside onViewCreated, since
-    // registerForActivityResult must be called before the fragment reaches
-    // STARTED.
+    // Lets a *custom* entry (one with no bundled clip) get a video attached or replaced. Uses
+    // ACTION_OPEN_DOCUMENT so a persistable read permission can be taken (GET_CONTENT's grant
+    // only lasts the current process). Registered as a property because
+    // registerForActivityResult must be called before the fragment reaches STARTED.
     private val pickVideoLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri == null) return@registerForActivityResult
         requireContext().contentResolver.takePersistableUriPermission(
@@ -114,14 +66,13 @@ class DictionaryDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val appContainer = (requireActivity().application as SignTalkApp).container
         entryId = arguments?.getLong("entryId") ?: 0L
+        player = SignVideoPlayer(requireContext(), binding.entryVideoView, "DictionaryDetail")
 
-        binding.entryVideoView.surfaceTextureListener = surfaceTextureListener
-
-        binding.addVideoButton.setOnClickListener {
-            pickVideoLauncher.launch(arrayOf("video/*"))
-        }
-        binding.changeVideoButton.setOnClickListener {
-            pickVideoLauncher.launch(arrayOf("video/*"))
+        binding.addVideoButton.setOnClickListener { pickVideoLauncher.launch(arrayOf("video/*")) }
+        binding.changeVideoButton.setOnClickListener { pickVideoLauncher.launch(arrayOf("video/*")) }
+        binding.replayVideoButton.setOnClickListener { player?.restart() }
+        binding.slowVideoButton.addOnCheckedChangeListener { _, checked ->
+            player?.speed = if (checked) 0.5f else 1f
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -130,59 +81,89 @@ class DictionaryDetailFragment : Fragment() {
                 binding.loadingText.text = "Sign not found."
                 return@launch
             }
-            // The name is shown large in the screen header, so the toolbar keeps its generic label.
-
             binding.loadingText.visibility = View.GONE
             binding.contentGroup.visibility = View.VISIBLE
             binding.entryEmoji.text = entry.emoji
             binding.entryName.text = entry.displayName
             binding.entryCategory.text = entry.category
             binding.entryCategory.visibility = if (entry.category.isBlank()) View.GONE else View.VISIBLE
-            binding.entryDescription.text = entry.description
+            binding.entryDescription.text = entry.description.ifBlank { "No description yet." }
+            binding.entryFacts.text = facts(entry)
+            binding.entryValidation.text = validationText(entry)
             bindVideo(entry)
 
             if (entry.isUserAdded) {
+                // Only the user's own personal entries can be deleted, and only on this phone.
+                // Shared dictionary content is never deleted from the app (admins archive it).
                 binding.deleteButton.visibility = View.VISIBLE
                 binding.deleteButton.setOnClickListener {
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        appContainer.dictionaryRepository.deleteEntry(entry.id)
-                        findNavController().popBackStack()
-                    }
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Delete \"${entry.displayName}\"?")
+                        .setMessage("This removes your personal entry from this phone.")
+                        .setNegativeButton("Cancel", null)
+                        .setPositiveButton("Delete") { _, _ ->
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                appContainer.dictionaryRepository.deleteEntry(entry.id)
+                                findNavController().popBackStack()
+                            }
+                        }
+                        .show()
                 }
             }
         }
     }
 
+    private fun facts(entry: DictionaryEntry): String = buildList {
+        val language = when (entry.language) {
+            "FSL" -> "Filipino Sign Language (FSL)"
+            "ASL" -> "American Sign Language (ASL)"
+            else -> null
+        }
+        language?.let { add("Language: $it") }
+        if (entry.gloss.isNotBlank()) add("Sign gloss: ${entry.gloss}")
+        if (entry.meaningEn.isNotBlank()) add("English meaning: ${entry.meaningEn}")
+        if (entry.meaningFil.isNotBlank()) add("Filipino meaning: ${entry.meaningFil}")
+        when (entry.hands) {
+            "one" -> add("Hands: one hand")
+            "two" -> add("Hands: two hands")
+        }
+        when (entry.signType) {
+            "static" -> add("Movement: static (held handshape)")
+            "dynamic" -> add("Movement: dynamic (moving sign)")
+        }
+        if (entry.synonyms.isNotEmpty()) add("Also found by: ${entry.synonyms.joinToString(", ")}")
+        if (entry.source.isNotBlank()) add("Video source: ${entry.source}")
+    }.joinToString("\n").ifBlank { "No details yet." }
+
+    private fun validationText(entry: DictionaryEntry): String = when (entry.validationStatus) {
+        ValidationStatus.VERIFIED ->
+            "Verified by an FSL validator" + if (entry.validatedBy.isNotBlank()) " (${entry.validatedBy})." else "."
+        ValidationStatus.PERSONAL ->
+            "Personal entry, not verified. Only on this phone; the camera cannot recognize it."
+        ValidationStatus.SUBMITTED ->
+            "Sent for review, not verified yet. The camera cannot recognize it."
+        else ->
+            "Not yet verified by an FSL validator."
+    }
+
     /**
-     * Shows this sign's real FSL-105 training clip, bundled into the app as an
-     * asset, if one exists for it. That covers all 50 seeded dictionary
-     * signs -- for those there is nothing to "add" or "change", so neither
-     * button is shown at all.
-     *
-     * Otherwise (a custom, user-added sign with no training footage) falls
-     * back to the manual picker: shows whatever video the user has attached,
-     * with a "Change video" button, or an "Add video" prompt if nothing has
-     * been attached yet.
+     * Shows this sign's bundled reference clip if one exists (all 50 bundled signs).
+     * Otherwise (a personal entry) shows the video the user attached, with "Change video", or
+     * an "Add a video" prompt.
      */
     private suspend fun bindVideo(entry: DictionaryEntry) {
-        val assetPath = "sign_videos/${entry.label}.mp4"
-        if (hasAsset(assetPath)) {
-            // A "file:///android_asset/..." Uri can't be handed to
-            // MediaPlayer directly (that scheme only resolves in WebView --
-            // see project notes for the full explanation), so the asset is
-            // copied once into the app's cache dir and played from there via
-            // a real file Uri.
-            val realUri = copyAssetToCache(assetPath)
-            showVideo(realUri)
+        val bundled = SignVideoPlayer.bundledClipUri(requireContext(), entry.label)
+        if (bundled != null) {
+            showVideo(bundled)
             binding.addVideoButton.visibility = View.GONE
             binding.changeVideoButton.visibility = View.GONE
             return
         }
-
         val uriString = entry.videoUri
         if (uriString.isNullOrBlank()) {
-            binding.addVideoButton.visibility = View.VISIBLE
+            binding.addVideoButton.visibility = if (entry.isUserAdded) View.VISIBLE else View.GONE
             binding.entryVideoView.visibility = View.GONE
+            binding.videoControls.visibility = View.GONE
             binding.changeVideoButton.visibility = View.GONE
         } else {
             showVideo(Uri.parse(uriString))
@@ -191,98 +172,16 @@ class DictionaryDetailFragment : Fragment() {
         }
     }
 
-    /** True if `assets/<path>` exists and can be opened. */
-    private fun hasAsset(path: String): Boolean =
-        try {
-            requireContext().assets.openFd(path).close()
-            true
-        } catch (e: IOException) {
-            false
-        }
-
-    /**
-     * Copies a bundled asset video to this app's cache dir (once -- reused on
-     * later opens) and returns a real file:// Uri pointing at that copy. See
-     * the note in bindVideo() above for why a plain "file:///android_asset/"
-     * Uri can't be handed to the player directly.
-     */
-    private suspend fun copyAssetToCache(assetPath: String): Uri = withContext(Dispatchers.IO) {
-        val fileName = assetPath.substringAfterLast('/')
-        val cacheDir = File(requireContext().cacheDir, "sign_videos").apply { mkdirs() }
-        val outFile = File(cacheDir, fileName)
-        if (!outFile.exists() || outFile.length() == 0L) {
-            requireContext().assets.open(assetPath).use { input ->
-                outFile.outputStream().use { output -> input.copyTo(output) }
-            }
-        }
-        Uri.fromFile(outFile)
-    }
-
     private fun showVideo(uri: Uri) {
         binding.entryVideoView.visibility = View.VISIBLE
-        pendingUri = uri
-        val surface = currentSurface
-        if (surface != null) {
-            // TextureView is already attached to a window and its
-            // SurfaceTexture already exists (e.g. re-opening/changing the
-            // video on a fragment that's already visible) -- start right
-            // away rather than waiting for onSurfaceTextureAvailable, which
-            // won't fire again for an already-available texture.
-            startPlayback(uri)
-        }
-        // Otherwise onSurfaceTextureAvailable (registered in onViewCreated)
-        // will call startPlayback() itself once the TextureView's surface is
-        // ready -- this is the normal first-open path, since the view was
-        // "gone" until the line above just made it visible.
-    }
-
-    private fun startPlayback(uri: Uri) {
-        val surface = currentSurface ?: return
-        releasePlayer()
-        try {
-            mediaPlayer = MediaPlayer().apply {
-                setSurface(surface)
-                setDataSource(requireContext(), uri)
-                // Loop the clip -- these are short (~4s) reference signs, and the
-                // whole point of watching one is to be able to rewatch it as many
-                // times as needed to learn the movement. It just plays on repeat,
-                // no controls, nothing to tap.
-                isLooping = true
-                setOnPreparedListener { mp ->
-                    _binding?.entryVideoView?.fitVideo(mp.videoWidth, mp.videoHeight)
-                    mp.start()
-                }
-                setOnErrorListener { _, what, extra ->
-                    Log.e("DictionaryDetail", "Video playback error: what=$what extra=$extra uri=$uri")
-                    true // consume -- don't let the framework pop its own dialog
-                }
-                prepareAsync()
-            }
-        } catch (e: IOException) {
-            Log.e("DictionaryDetail", "Failed to set video data source: $uri", e)
-        }
-    }
-
-    private fun releasePlayer() {
-        mediaPlayer?.apply {
-            setOnPreparedListener(null)
-            setOnErrorListener(null)
-            try {
-                reset()
-            } catch (e: IllegalStateException) {
-                // already in an error/released state -- fine to ignore, we're tearing it down anyway
-            }
-            release()
-        }
-        mediaPlayer = null
+        binding.videoControls.visibility = View.VISIBLE
+        player?.play(uri)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        releasePlayer()
-        currentSurface?.release()
-        currentSurface = null
-        pendingUri = null
+        player?.release()
+        player = null
         _binding = null
     }
 }

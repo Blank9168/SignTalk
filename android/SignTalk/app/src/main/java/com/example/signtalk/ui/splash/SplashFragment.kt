@@ -7,10 +7,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.signtalk.R
+import com.example.signtalk.SignTalkApp
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-/** Brief branded splash, then routes straight to Home -- no login gate. */
+/** Brief branded splash, then the first-time tutorial (once) or Home -- no login gate. */
 class SplashFragment : Fragment(R.layout.fragment_splash) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -18,8 +20,12 @@ class SplashFragment : Fragment(R.layout.fragment_splash) {
         animateIn(view)
 
         viewLifecycleOwner.lifecycleScope.launch {
+            val settings = (requireActivity().application as SignTalkApp).container.settingsRepository
             delay(SPLASH_DURATION_MS)
-            findNavController().navigate(R.id.action_splash_to_home)
+            val onboardingDone = settings.settings.first().onboardingDone
+            findNavController().navigate(
+                if (onboardingDone) R.id.action_splash_to_home else R.id.action_splash_to_onboarding
+            )
         }
     }
 

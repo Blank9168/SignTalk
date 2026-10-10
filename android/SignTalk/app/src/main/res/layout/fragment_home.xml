@@ -47,17 +47,16 @@
                     android:textSize="26sp" />
             </LinearLayout>
 
-            <ImageButton
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/settingsButton"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="-8dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Settings"
-                android:padding="12dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_settings"
-                app:tint="?attr/colorOnSurfaceVariant" />
+                style="@style/Widget.SignTalk.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="Settings"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                app:icon="@drawable/ic_settings"
+                app:iconTint="?attr/colorOnSurfaceVariant" />
         </LinearLayout>
 
         <!-- Hero banner. -->
@@ -97,7 +96,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="Two-way Filipino Sign Language communication"
+                    android:text="Recognizes selected FSL and ASL signs"
                     android:textAppearance="?attr/textAppearanceBodyMedium"
                     android:textColor="@color/on_brand_muted" />
 
@@ -150,68 +149,6 @@
             android:text="Get started"
             android:textAppearance="@style/TextAppearance.SignTalk.Overline" />
 
-        <!-- Featured action: the app's core feature. -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/recognitionCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:cardBackgroundColor="?attr/colorPrimaryContainer"
-            app:cardCornerRadius="24dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="20dp">
-
-                <ImageView
-                    style="@style/SignTalk.IconBadge"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:padding="15dp"
-                    android:background="@drawable/bg_badge_solid_primary"
-                    android:src="@drawable/ic_videocam"
-                    app:tint="?attr/colorOnPrimary" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="12dp"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Sign to Text &amp; Speech"
-                        android:textAppearance="@style/TextAppearance.SignTalk.CardTitle"
-                        android:textColor="?attr/colorOnPrimaryContainer" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:alpha="0.8"
-                        android:text="Sign to the camera and SignTalk reads it out loud in real time"
-                        android:textAppearance="?attr/textAppearanceBodyMedium"
-                        android:textColor="?attr/colorOnPrimaryContainer" />
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_arrow_forward"
-                    app:tint="?attr/colorOnPrimaryContainer" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Secondary actions, side by side. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -220,13 +157,61 @@
             android:orientation="horizontal">
 
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/recognitionCard"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:clickable="true"
+                android:contentDescription="Recognize Sign. Sign to the camera"
+                android:focusable="true"
+                android:minHeight="148dp"
+                app:cardBackgroundColor="?attr/colorPrimaryContainer"
+                app:cardCornerRadius="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <ImageView
+                        style="@style/SignTalk.IconBadge"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:background="@drawable/bg_badge_solid_primary"
+                        android:src="@drawable/ic_videocam"
+                        app:tint="?attr/colorOnPrimary" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="Recognize Sign"
+                        android:textAppearance="@style/TextAppearance.SignTalk.CardTitle"
+                        android:textColor="?attr/colorOnPrimaryContainer"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Sign to the camera"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?attr/colorOnPrimaryContainer" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/translateCard"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="6dp"
                 android:layout_weight="1"
+                android:layout_marginStart="6dp"
                 android:clickable="true"
+                android:contentDescription="Text / Speech to Sign. Type or say a word"
                 android:focusable="true"
+                android:minHeight="148dp"
                 app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
                 app:cardCornerRadius="24dp">
 
@@ -238,6 +223,8 @@
 
                     <ImageView
                         style="@style/SignTalk.IconBadge"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
                         android:background="@drawable/bg_badge_secondary"
                         android:src="@drawable/ic_record_voice"
                         app:tint="?attr/colorOnSecondaryContainer" />
@@ -245,29 +232,40 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="14dp"
                         android:text="Text / Speech to Sign"
                         android:textAppearance="@style/TextAppearance.SignTalk.CardTitle"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="18sp" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Type or speak, then watch it signed back"
-                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:text="Type or say a word"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:textColor="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/dictionaryCard"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="6dp"
                 android:layout_weight="1"
+                android:layout_marginEnd="6dp"
                 android:clickable="true"
+                android:contentDescription="Dictionary. Browse all 50 signs"
                 android:focusable="true"
+                android:minHeight="148dp"
                 app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
                 app:cardCornerRadius="24dp">
 
@@ -279,6 +277,8 @@
 
                     <ImageView
                         style="@style/SignTalk.IconBadge"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
                         android:background="@drawable/bg_badge_tertiary"
                         android:src="@drawable/ic_book"
                         app:tint="?attr/colorOnTertiaryContainer" />
@@ -286,23 +286,70 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="14dp"
                         android:text="Dictionary"
                         android:textAppearance="@style/TextAppearance.SignTalk.CardTitle"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="18sp" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
-                        android:text="Browse and search every supported sign"
-                        android:textAppearance="?attr/textAppearanceBodySmall"
+                        android:text="Browse all 50 signs"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/addSignCard"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:clickable="true"
+                android:contentDescription="Add a Sign. Save a sign, send it for review"
+                android:focusable="true"
+                android:minHeight="148dp"
+                app:cardBackgroundColor="?attr/colorSurfaceContainerLow"
+                app:cardCornerRadius="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="18dp">
+
+                    <ImageView
+                        style="@style/SignTalk.IconBadge"
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:background="@drawable/bg_badge_primary"
+                        android:src="@drawable/ic_add"
+                        app:tint="?attr/colorOnPrimaryContainer" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="14dp"
+                        android:text="Add a Sign"
+                        android:textAppearance="@style/TextAppearance.SignTalk.CardTitle"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Save a sign, send it for review"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
                         android:textColor="?attr/colorOnSurfaceVariant" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
-        <!-- Quick tip. -->
+        <!-- Quick tip + tutorial. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -310,7 +357,10 @@
             android:background="@drawable/bg_info_neutral"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="16dp">
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp">
 
             <ImageView
                 android:layout_width="22dp"
@@ -324,9 +374,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
                 android:layout_weight="1"
-                android:text="For best results, keep your hands, head and shoulders in frame, in good lighting."
-                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:text="Good light. Hands inside the frame."
+                android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?attr/colorOnSurfaceVariant" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/tutorialButton"
+                style="@style/Widget.SignTalk.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:text="How to use"
+                app:icon="@drawable/ic_school" />
         </LinearLayout>
 
     </LinearLayout>

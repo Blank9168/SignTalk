@@ -1,0 +1,832 @@
+[
+  {
+    "slug": "isa",
+    "language": "FSL",
+    "gloss": "ONE",
+    "meaningEn": "One",
+    "meaningFil": "Isa",
+    "signType": "static",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "one",
+      "1",
+      "uno"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "dalawa",
+    "language": "FSL",
+    "gloss": "TWO",
+    "meaningEn": "Two",
+    "meaningFil": "Dalawa",
+    "signType": "static",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "two",
+      "2",
+      "dos"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "tatlo",
+    "language": "FSL",
+    "gloss": "THREE",
+    "meaningEn": "Three",
+    "meaningFil": "Tatlo",
+    "signType": "static",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "three",
+      "3",
+      "tres"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "apat",
+    "language": "FSL",
+    "gloss": "FOUR",
+    "meaningEn": "Four",
+    "meaningFil": "Apat",
+    "signType": "static",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "four",
+      "4",
+      "kuwatro"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "lima",
+    "language": "FSL",
+    "gloss": "FIVE",
+    "meaningEn": "Five",
+    "meaningFil": "Lima",
+    "signType": "static",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "five",
+      "5",
+      "singko"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "anim",
+    "language": "FSL",
+    "gloss": "SIX",
+    "meaningEn": "Six",
+    "meaningFil": "Anim",
+    "signType": "static",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "six",
+      "6",
+      "sais"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "pito",
+    "language": "FSL",
+    "gloss": "SEVEN",
+    "meaningEn": "Seven",
+    "meaningFil": "Pito",
+    "signType": "static",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "seven",
+      "7",
+      "siyete"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "walo",
+    "language": "FSL",
+    "gloss": "EIGHT",
+    "meaningEn": "Eight",
+    "meaningFil": "Walo",
+    "signType": "static",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "eight",
+      "8",
+      "otso"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "siyam",
+    "language": "FSL",
+    "gloss": "NINE",
+    "meaningEn": "Nine",
+    "meaningFil": "Siyam",
+    "signType": "static",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "nine",
+      "9",
+      "nuwebe"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "sampu",
+    "language": "FSL",
+    "gloss": "TEN",
+    "meaningEn": "Ten",
+    "meaningFil": "Sampu",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "ten",
+      "10",
+      "diyes"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "asul",
+    "language": "FSL",
+    "gloss": "BLUE",
+    "meaningEn": "Blue",
+    "meaningFil": "Asul",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "blue",
+      "bughaw"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "berde",
+    "language": "FSL",
+    "gloss": "GREEN",
+    "meaningEn": "Green",
+    "meaningFil": "Berde",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "green",
+      "luntian"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "pula",
+    "language": "FSL",
+    "gloss": "RED",
+    "meaningEn": "Red",
+    "meaningFil": "Pula",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "red"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "kayumanggi",
+    "language": "FSL",
+    "gloss": "BROWN",
+    "meaningEn": "Brown",
+    "meaningFil": "Kayumanggi",
+    "signType": "dynamic",
+    "hands": "two",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "brown",
+      "tsokolate"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "itim",
+    "language": "FSL",
+    "gloss": "BLACK",
+    "meaningEn": "Black",
+    "meaningFil": "Itim",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "black"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "puti",
+    "language": "FSL",
+    "gloss": "WHITE",
+    "meaningEn": "White",
+    "meaningFil": "Puti",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "white"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "dilaw",
+    "language": "FSL",
+    "gloss": "YELLOW",
+    "meaningEn": "Yellow",
+    "meaningFil": "Dilaw",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "yellow"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "kahel",
+    "language": "FSL",
+    "gloss": "ORANGE",
+    "meaningEn": "Orange",
+    "meaningFil": "Kahel",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "orange"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "abo",
+    "language": "FSL",
+    "gloss": "GRAY",
+    "meaningEn": "Gray",
+    "meaningFil": "Abo",
+    "signType": "dynamic",
+    "hands": "two",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "gray",
+      "grey",
+      "kulay abo"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "rosas",
+    "language": "FSL",
+    "gloss": "PINK",
+    "meaningEn": "Pink",
+    "meaningFil": "Rosas",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "pink",
+      "kulay rosas"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "lila",
+    "language": "FSL",
+    "gloss": "VIOLET",
+    "meaningEn": "Violet",
+    "meaningFil": "Lila",
+    "signType": "dynamic",
+    "hands": "two",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "violet",
+      "purple"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "maliwanag",
+    "language": "FSL",
+    "gloss": "LIGHT",
+    "meaningEn": "Light (color)",
+    "meaningFil": "Maliwanag",
+    "signType": "dynamic",
+    "hands": "two",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "light",
+      "bright",
+      "light color"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "magandang_umaga",
+    "language": "FSL",
+    "gloss": "GOOD MORNING",
+    "meaningEn": "Good morning",
+    "meaningFil": "Magandang umaga",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "umaga"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "magandang_hapon",
+    "language": "FSL",
+    "gloss": "GOOD AFTERNOON",
+    "meaningEn": "Good afternoon",
+    "meaningFil": "Magandang hapon",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "hapon"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "magandang_gabi",
+    "language": "FSL",
+    "gloss": "GOOD EVENING",
+    "meaningEn": "Good evening",
+    "meaningFil": "Magandang gabi",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "FSL-105 dataset (DLSU / DOST, CC BY 4.0)",
+    "synonyms": [
+      "gabi"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "good_morning",
+    "language": "ASL",
+    "gloss": "GOOD MORNING",
+    "meaningEn": "Good morning",
+    "meaningFil": "Magandang umaga",
+    "signType": "dynamic",
+    "hands": "two",
+    "source": "ASL Citizen (Microsoft Research), joined from separate word clips",
+    "synonyms": [
+      "morning"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "good_afternoon",
+    "language": "ASL",
+    "gloss": "GOOD AFTERNOON",
+    "meaningEn": "Good afternoon",
+    "meaningFil": "Magandang hapon",
+    "signType": "dynamic",
+    "hands": "two",
+    "source": "ASL Citizen (Microsoft Research), joined from separate word clips",
+    "synonyms": [
+      "afternoon"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "good_evening",
+    "language": "ASL",
+    "gloss": "GOOD NIGHT",
+    "meaningEn": "Good evening",
+    "meaningFil": "Magandang gabi",
+    "signType": "dynamic",
+    "hands": "two",
+    "source": "ASL Citizen (Microsoft Research), joined from separate word clips",
+    "synonyms": [
+      "evening",
+      "good night"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "hello",
+    "language": "ASL",
+    "gloss": "HELLO",
+    "meaningEn": "Hello",
+    "meaningFil": "Hello / Kumusta",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "hi",
+      "hey"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "how_are_you",
+    "language": "ASL",
+    "gloss": "HOW YOU",
+    "meaningEn": "How are you?",
+    "meaningFil": "Kumusta ka?",
+    "signType": "dynamic",
+    "hands": "two",
+    "source": "ASL Citizen (Microsoft Research), joined from separate word clips",
+    "synonyms": [
+      "kumusta",
+      "kumusta ka",
+      "kamusta",
+      "kamusta ka",
+      "how are you doing"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "im_fine",
+    "language": "ASL",
+    "gloss": "FINE",
+    "meaningEn": "I'm fine",
+    "meaningFil": "Mabuti naman ako",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "fine",
+      "i am fine",
+      "im okay",
+      "okay",
+      "mabuti",
+      "ayos lang"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "nice_to_meet_you",
+    "language": "ASL",
+    "gloss": "NICE MEET YOU",
+    "meaningEn": "Nice to meet you",
+    "meaningFil": "Ikinagagalak kitang makilala",
+    "signType": "dynamic",
+    "hands": "two",
+    "source": "ASL Citizen (Microsoft Research), joined from separate word clips",
+    "synonyms": [
+      "nice meeting you",
+      "ikinagagalak kitang makilala"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "thank_you",
+    "language": "ASL",
+    "gloss": "THANKYOU",
+    "meaningEn": "Thank you",
+    "meaningFil": "Salamat",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "thanks",
+      "salamat",
+      "salamat po"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "youre_welcome",
+    "language": "ASL",
+    "gloss": "WELCOME",
+    "meaningEn": "You're welcome",
+    "meaningFil": "Walang anuman",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "you are welcome",
+      "welcome",
+      "walang anuman"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "see_you_tomorrow",
+    "language": "ASL",
+    "gloss": "SEE YOU TOMORROW",
+    "meaningEn": "See you tomorrow",
+    "meaningFil": "Kita tayo bukas",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research), joined from separate word clips",
+    "synonyms": [
+      "see you",
+      "kita tayo bukas",
+      "bukas"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "understand",
+    "language": "ASL",
+    "gloss": "UNDERSTAND",
+    "meaningEn": "Understand",
+    "meaningFil": "Naiintindihan",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "i understand",
+      "got it",
+      "naiintindihan",
+      "naiintindihan ko"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "dont_understand",
+    "language": "ASL",
+    "gloss": "NOT-UNDERSTAND",
+    "meaningEn": "Don't understand",
+    "meaningFil": "Hindi naiintindihan",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "do not understand",
+      "i dont understand",
+      "hindi naiintindihan",
+      "hindi ko naiintindihan"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "know",
+    "language": "ASL",
+    "gloss": "KNOW",
+    "meaningEn": "Know",
+    "meaningFil": "Alam",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "i know",
+      "alam",
+      "alam ko"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "dont_know",
+    "language": "ASL",
+    "gloss": "DONT-KNOW",
+    "meaningEn": "Don't know",
+    "meaningFil": "Hindi alam",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "do not know",
+      "i dont know",
+      "hindi ko alam",
+      "ewan"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "yes",
+    "language": "ASL",
+    "gloss": "YES",
+    "meaningEn": "Yes",
+    "meaningFil": "Oo",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "oo",
+      "opo",
+      "yeah"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "no",
+    "language": "ASL",
+    "gloss": "NO",
+    "meaningEn": "No",
+    "meaningFil": "Hindi",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "hindi",
+      "hindi po",
+      "nope"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "wrong",
+    "language": "ASL",
+    "gloss": "WRONG",
+    "meaningEn": "Wrong",
+    "meaningFil": "Mali",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "mali",
+      "incorrect"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "correct",
+    "language": "ASL",
+    "gloss": "RIGHT",
+    "meaningEn": "Correct",
+    "meaningFil": "Tama",
+    "signType": "dynamic",
+    "hands": "two",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "right",
+      "tama"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "slow",
+    "language": "ASL",
+    "gloss": "SLOW",
+    "meaningEn": "Slow",
+    "meaningFil": "Mabagal",
+    "signType": "dynamic",
+    "hands": "two",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "slowly",
+      "mabagal",
+      "dahan dahan"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "fast",
+    "language": "ASL",
+    "gloss": "FAST",
+    "meaningEn": "Fast",
+    "meaningFil": "Mabilis",
+    "signType": "dynamic",
+    "hands": "two",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "quick",
+      "quickly",
+      "mabilis"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "father",
+    "language": "ASL",
+    "gloss": "FATHER",
+    "meaningEn": "Father",
+    "meaningFil": "Ama / Tatay",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "dad",
+      "papa",
+      "tatay",
+      "ama",
+      "itay"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "mother",
+    "language": "ASL",
+    "gloss": "MOTHER",
+    "meaningEn": "Mother",
+    "meaningFil": "Ina / Nanay",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "mom",
+      "mama",
+      "nanay",
+      "ina",
+      "inay"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "boy",
+    "language": "ASL",
+    "gloss": "BOY",
+    "meaningEn": "Boy",
+    "meaningFil": "Batang lalaki",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "lalaki",
+      "batang lalaki"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "girl",
+    "language": "ASL",
+    "gloss": "GIRL",
+    "meaningEn": "Girl",
+    "meaningFil": "Batang babae",
+    "signType": "dynamic",
+    "hands": "one",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "babae",
+      "batang babae"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  },
+  {
+    "slug": "married",
+    "language": "ASL",
+    "gloss": "MARRY",
+    "meaningEn": "Married",
+    "meaningFil": "Kasal / May asawa",
+    "signType": "dynamic",
+    "hands": "two",
+    "source": "ASL Citizen (Microsoft Research)",
+    "synonyms": [
+      "marry",
+      "kasal",
+      "may asawa"
+    ],
+    "validationStatus": "unverified",
+    "validatedBy": ""
+  }
+]

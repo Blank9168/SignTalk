@@ -2,6 +2,7 @@ const request = require("supertest");
 
 jest.mock("../src/models/DictionaryEntry");
 jest.mock("../src/models/User");
+jest.mock("../src/models/AuditLog");
 
 const DictionaryEntry = require("../src/models/DictionaryEntry");
 const User = require("../src/models/User");
@@ -27,7 +28,12 @@ describe("GET /api/dictionary", () => {
     expect(res.status).toBe(200);
     expect(res.body.count).toBe(1);
     expect(res.body.entries).toEqual(fakeEntries);
-    expect(DictionaryEntry.find).toHaveBeenCalledWith({ language: "FSL", category: "FSL - Numbers" });
+    // Archived entries are excluded from public reads by default.
+    expect(DictionaryEntry.find).toHaveBeenCalledWith({
+      language: "FSL",
+      category: "FSL - Numbers",
+      archived: { $ne: true },
+    });
   });
 });
 

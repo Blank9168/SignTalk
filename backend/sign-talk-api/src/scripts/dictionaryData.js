@@ -8,6 +8,8 @@
 // (sign_videos/<slug>.mp4 and ai/dataset/raw/<slug>/*.npy exist for every
 // one of these) as of the 2026-09-06 vocabulary swap + retraining.
 
+const signMetadata = require("./signMetadata.json");
+
 const dictionaryData = [
   // ---- FSL: Numbers ----
   { slug: "isa", label: "Isa", language: "FSL", category: "FSL - Numbers", description: "Real FSL sign \"Isa\" (One), from the FSL-105 dataset's actual Filipino signer footage (gloss ONE).", emoji: "1️⃣" },
@@ -72,6 +74,27 @@ const dictionaryData = [
   { slug: "boy", label: "Boy", language: "ASL", category: "ASL - People & Relationships", description: "Real ASL sign \"Boy\", from Microsoft's ASL Citizen dataset (gloss BOY).", emoji: "👦" },
   { slug: "girl", label: "Girl", language: "ASL", category: "ASL - People & Relationships", description: "Real ASL sign \"Girl\", from Microsoft's ASL Citizen dataset (gloss GIRL).", emoji: "👧" },
   { slug: "married", label: "Married", language: "ASL", category: "ASL - People & Relationships", description: "Real ASL sign \"Married\", from Microsoft's ASL Citizen dataset (gloss MARRY -- base verb form, ASL has no separate \"MARRIED\" adjective sign).", emoji: "💍" },
-].map((entry) => ({ ...entry, hasVideo: true, hasTrainingData: true }));
+].map((entry) => ({
+  ...entry,
+  // gloss, meaningEn, meaningFil, synonyms, signType, hands, source,
+  // validationStatus, validatedBy -- generated from ai/dataset/sign_metadata.json
+  // by ai/dataset/export_sign_metadata.py (edit the JSON, not signMetadata.json).
+  ...pickMeta(entry.slug),
+  hasVideo: true,
+  hasTrainingData: true,
+}));
+
+function pickMeta(slug) {
+  const meta = signMetadata.find((m) => m.slug === slug);
+  if (!meta) throw new Error(`signMetadata.json has no entry for "${slug}"`);
+  const { slug: _slug, language: _language, validationStatus, validatedBy, ...rest } = meta;
+  // Only push a validation status the team has actually recorded in the JSON.
+  // Leaving "unverified" out means a re-seed never wipes a verification that a
+  // validator did later through POST /api/dictionary/:slug/verify.
+  if (validationStatus && validationStatus !== "unverified") {
+    return { ...rest, validationStatus, validatedBy: validatedBy || null };
+  }
+  return rest;
+}
 
 module.exports = dictionaryData;

@@ -48,12 +48,10 @@ import java.util.Locale
 
 /**
  * "Text/Speech to Sign" -- the reverse direction of [com.example.signtalk.ui.recognition.RecognitionFragment].
- * A hearing person types or speaks a word/phrase here (English or Filipino);
- * it's matched against the same 50-sign dictionary and shown back as a
- * sequence of real sign videos, for a deaf/mute person to read. Together
- * with the camera recognizer, this is what makes the app's tagline on the
- * Home screen ("Two-way Filipino Sign Language communication") actually
- * true rather than just a description of the sign-to-text half.
+ * A hearing or non-signing person types or speaks a word/phrase here (English or Filipino);
+ * each supported word is looked up in the same 50-sign dictionary (by label or synonym) and
+ * shown back as a sequence of real sign videos for a Deaf/signing person to watch. This is a
+ * dictionary lookup, not sentence-level FSL translation, and the screen says so.
  */
 class TranslateFragment : Fragment() {
 
@@ -90,6 +88,8 @@ class TranslateFragment : Fragment() {
     private var playingTokens: List<TranslationToken>? = null
     private var playingTokenIndex: Int = -1
     private var advanceJob: Job? = null
+    /** 1.0 = normal, [SLOW_SPEED] while "Slow" is on (for learning a sign). */
+    private var playbackSpeed = 1f
 
     // Live-as-you-type translation: re-matches a short idle moment after the
     // last keystroke, rather than on every single character (which would
@@ -191,7 +191,20 @@ class TranslateFragment : Fragment() {
             requestMicPermission.launch(Manifest.permission.RECORD_AUDIO)
         }
 
-        binding.replayButton.setOnClickListener { viewModel.replay() }
+        binding.replayButton.setOnClickListener {
+            val state = viewModel.uiState.value as? TranslateUiState.Result
+            val matched = state?.tokens?.count { it is TranslationToken.Matched } ?: 0
+            if (matched <= 1) {
+                // Single sign: restart the clip itself.
+                mediaPlayer?.let { mp -> runCatching { mp.seekTo(0); mp.start() } }
+            } else {
+                viewModel.replay()
+            }
+        }
+        binding.slowButton.addOnCheckedChangeListener { _, checked ->
+            playbackSpeed = if (checked) SLOW_SPEED else 1f
+            mediaPlayer?.let { applySpeed(it) }
+        }
 
         // Example phrases: tapping one types it in, and the live matcher does the rest.
         for (i in 0 until binding.exampleChips.childCount) {
@@ -240,10 +253,17 @@ class TranslateFragment : Fragment() {
             is TranslateUiState.Idle, is TranslateUiState.Translating -> {
                 binding.resultGroup.visibility = View.GONE
                 binding.noSignsText.visibility = View.GONE
+                binding.noSignsSuggestionChips.visibility = View.GONE
             }
             is TranslateUiState.NoSignsFound -> {
                 binding.resultGroup.visibility = View.GONE
                 binding.noSignsText.visibility = View.VISIBLE
+                val hasSuggestions = renderSuggestions(binding.noSignsSuggestionChips, state.tokens)
+                binding.noSignsText.text = if (hasSuggestions) {
+                    "No sign found for \"${state.text.trim()}\". Did you mean:"
+                } else {
+                    "No sign found. Try a simpler word, or check the Dictionary for the 50 supported signs."
+                }
                 stopAndClearVideo()
             }
             is TranslateUiState.Result -> renderResult(state)
@@ -253,27 +273,42 @@ class TranslateFragment : Fragment() {
     private fun renderResult(state: TranslateUiState.Result) {
         binding.resultGroup.visibility = View.VISIBLE
         binding.noSignsText.visibility = View.GONE
+        binding.noSignsSuggestionChips.visibility = View.GONE
 
         val matchedIndices = state.tokens.indices.filter { state.tokens[it] is TranslationToken.Matched }
         val positionInSequence = matchedIndices.indexOf(state.currentIndex) + 1
         val currentToken = state.tokens[state.currentIndex] as TranslationToken.Matched
 
-        binding.currentSignLabel.text = currentToken.entry.displayName
+        val entry = currentToken.entry
+        binding.currentSignLabel.text = entry.displayName
+        // Gloss and meanings on separate lines, so the sign is not mistaken for "English or
+        // Tagalog spelled with the hands".
+        val glossLine = buildList {
+            add(if (entry.language.isNotBlank()) "${entry.language} sign" else "Sign")
+            if (entry.gloss.isNotBlank()) add("Gloss: ${entry.gloss}")
+        }.joinToString(" · ")
+        binding.currentSignGloss.text = glossLine
+        val meanings = buildList {
+            if (entry.meaningEn.isNotBlank()) add("English: ${entry.meaningEn}")
+            if (entry.meaningFil.isNotBlank()) add("Filipino: ${entry.meaningFil}")
+        }
+        binding.currentSignMeanings.text = meanings.joinToString("\n")
+        binding.currentSignMeanings.visibility = if (meanings.isEmpty()) View.GONE else View.VISIBLE
         binding.progressLabel.text = "Sign $positionInSequence of ${matchedIndices.size}"
 
         renderSequenceChips(state)
 
         val unmatchedWords = state.tokens.filterIsInstance<TranslationToken.Unmatched>().map { it.word }
+        val hasSuggestions = renderSuggestions(binding.suggestionChips, state.tokens)
         if (unmatchedWords.isNotEmpty()) {
             binding.unmatchedText.visibility = View.VISIBLE
-            binding.unmatchedText.text = "No sign found for: " + unmatchedWords.joinToString(", ")
+            binding.unmatchedText.text = "No sign for: " + unmatchedWords.joinToString(", ") +
+                if (hasSuggestions) ". Did you mean:" else ". These words are skipped."
         } else {
             binding.unmatchedText.visibility = View.GONE
         }
 
         val isLastSign = positionInSequence == matchedIndices.size
-        binding.replayButton.visibility =
-            if (isLastSign && matchedIndices.size > 1) View.VISIBLE else View.GONE
 
         if (playingTokens !== state.tokens || playingTokenIndex != state.currentIndex) {
             playingTokens = state.tokens
@@ -316,6 +351,35 @@ class TranslateFragment : Fragment() {
             }
             group.addView(chip)
         }
+    }
+
+    /**
+     * "Did you mean" chips for unmatched words. Tapping one replaces that word in the input
+     * with the suggested sign's name. Returns true if any suggestion was shown.
+     */
+    private fun renderSuggestions(group: com.google.android.material.chip.ChipGroup, tokens: List<TranslationToken>): Boolean {
+        group.removeAllViews()
+        val pairs = tokens.filterIsInstance<TranslationToken.Unmatched>()
+            .flatMap { token -> token.suggestions.map { token.word to it } }
+            .distinctBy { it.second.id }
+            .take(MAX_SUGGESTIONS)
+        for ((word, suggestion) in pairs) {
+            group.addView(Chip(requireContext()).apply {
+                text = suggestion.displayName
+                contentDescription = "Use ${suggestion.displayName} instead of $word"
+                chipIcon = ContextCompat.getDrawable(requireContext(), com.example.signtalk.R.drawable.ic_search)
+                isChipIconVisible = true
+                setOnClickListener {
+                    val current = binding.wordInput.text?.toString().orEmpty()
+                    val replaced = current.replace(Regex("(?i)\\b" + Regex.escape(word) + "\\b"), suggestion.displayName)
+                    val newText = if (replaced == current) suggestion.displayName else replaced
+                    binding.wordInput.setText(newText)
+                    binding.wordInput.setSelection(newText.length)
+                }
+            })
+        }
+        group.visibility = if (pairs.isEmpty()) View.GONE else View.VISIBLE
+        return pairs.isNotEmpty()
     }
 
     private fun themeColor(attr: Int): Int {
@@ -406,10 +470,13 @@ class TranslateFragment : Fragment() {
                 setOnPreparedListener { mp ->
                     _binding?.signVideoView?.fitVideo(mp.videoWidth, mp.videoHeight)
                     mp.start()
+                    applySpeed(mp)
                     if (autoAdvance) {
                         val clipDurationMs = if (mp.duration > 0) mp.duration.toLong() else FALLBACK_CLIP_DURATION_MS
+                        // Slow playback takes longer per repeat, so wait proportionally longer.
+                        val realDurationMs = (clipDurationMs / playbackSpeed).toLong()
                         advanceJob = viewLifecycleOwner.lifecycleScope.launch {
-                            delay(clipDurationMs * REPEATS_BEFORE_ADVANCING)
+                            delay(realDurationMs * REPEATS_BEFORE_ADVANCING)
                             viewModel.advance()
                         }
                     }
@@ -422,6 +489,14 @@ class TranslateFragment : Fragment() {
             }
         } catch (e: IOException) {
             Log.e("TranslateFragment", "Failed to set video data source: $uri", e)
+        }
+    }
+
+    private fun applySpeed(mp: MediaPlayer) {
+        try {
+            mp.playbackParams = mp.playbackParams.setSpeed(playbackSpeed)
+        } catch (e: Exception) {
+            Log.w("TranslateFragment", "Playback speed not supported: ${e.message}")
         }
     }
 
@@ -466,6 +541,8 @@ class TranslateFragment : Fragment() {
     companion object {
         private const val LIVE_TRANSLATE_DEBOUNCE_MS = 300L
 
+        private const val MAX_SUGGESTIONS = 4
+
         /** How many times a non-final sign's clip repeats before the sequence auto-advances. */
         private const val REPEATS_BEFORE_ADVANCING = 2L
 
@@ -474,5 +551,7 @@ class TranslateFragment : Fragment() {
 
         /** Dwell time for a matched entry with no video at all (just its emoji). */
         private const val EMOJI_DWELL_MS = 2500L
+
+        private const val SLOW_SPEED = 0.5f
     }
 }

@@ -1,0 +1,72 @@
+{
+  "date": "2026-10-10",
+  "data_dir": "dataset/raw_iso",
+  "classes": 50,
+  "classes_by_language": {
+    "FSL": 25,
+    "ASL": 25
+  },
+  "total_clips": 1324,
+  "clips_by_language": {
+    "FSL": 866,
+    "ASL": 458
+  },
+  "clips_by_source": {
+    "fsl105": 501,
+    "drive_phone": 435,
+    "team_phone": 250,
+    "asl_citizen_concat": 24,
+    "asl_citizen": 114
+  },
+  "balance_all_clips": {
+    "classes": 50,
+    "total": 1324,
+    "min": 9,
+    "max": 37,
+    "mean": 26.48,
+    "median": 24.5,
+    "std": 8.734391793364894,
+    "imbalance_ratio_max_over_min": 4.111111111111111
+  },
+  "balance_without_drive": {
+    "classes": 50,
+    "total": 889,
+    "min": 9,
+    "max": 27,
+    "mean": 17.78,
+    "median": 17.0,
+    "std": 7.300109588218524,
+    "imbalance_ratio_max_over_min": 3.0
+  },
+  "deployed_model_split": {
+    "orig_train": 714,
+    "orig_val": 175,
+    "drive_total": 435,
+    "drive_train_val_test_reported": "258 / 46 / 131 (models/drive_retrain_results.json)"
+  },
+  "train_py_today_split": {
+    "train": 1061,
+    "val": 263
+  },
+  "dropped_by_train_py": 0,
+  "team_phone_img_blocks": [
+    "IMG_0926-IMG_1201 (250 clips)"
+  ],
+  "none_class": {
+    "total": 100,
+    "synthetic_none": 100
+  },
+  "signer_session_file": null,
+  "signers_known": 0,
+  "sessions_known": 0,
+  "frames": {
+    "stored_frames_per_clip": 30,
+    "mean_hand_frames": 20.512084592145015,
+    "mean_distinct_hand_frames": 18.1095166163142
+  },
+  "other_folders_not_used_for_training": {
+    "raw/ (pre-aspect-correction originals, incl. unused FSL-105 classes)": 2502,
+    "raw_archive_fsl105_unused/": 452,
+    "removed_clips/ (duplicates / empty, excluded)": 10
+  }
+}

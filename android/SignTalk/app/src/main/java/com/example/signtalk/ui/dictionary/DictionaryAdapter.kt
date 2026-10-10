@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.signtalk.databinding.ItemDictionaryEntryBinding
 import com.example.signtalk.domain.model.DictionaryEntry
+import com.example.signtalk.domain.model.ValidationStatus
 
 class DictionaryAdapter(
     private val onEntryClick: (DictionaryEntry) -> Unit
@@ -29,9 +30,17 @@ class DictionaryAdapter(
             binding.entryName.text = entry.displayName
             binding.entryLanguage.text = language.orEmpty()
             binding.entryLanguage.visibility = if (language == null) View.GONE else View.VISIBLE
-            binding.entryCategory.text = group
-            binding.entryCategory.visibility = if (group.isBlank()) View.GONE else View.VISIBLE
-            binding.root.contentDescription = "${entry.displayName}, ${entry.category}"
+            val status = when (entry.validationStatus) {
+                ValidationStatus.PERSONAL -> "Personal, not verified"
+                ValidationStatus.SUBMITTED -> "In review"
+                ValidationStatus.VERIFIED -> "Verified"
+                else -> null
+            }
+            binding.entryCategory.text = listOfNotNull(group.ifBlank { null }, status).joinToString(" · ")
+            binding.entryCategory.visibility = if (binding.entryCategory.text.isBlank()) View.GONE else View.VISIBLE
+            binding.root.contentDescription = listOfNotNull(
+                entry.displayName, entry.category, entry.meaningEn.ifBlank { null }, status
+            ).joinToString(", ")
             binding.root.setOnClickListener { onEntryClick(entry) }
         }
     }

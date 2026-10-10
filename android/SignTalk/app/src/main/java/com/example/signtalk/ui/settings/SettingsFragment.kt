@@ -11,6 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import androidx.navigation.fragment.findNavController
+import com.example.signtalk.R
 import com.example.signtalk.SignTalkApp
 import com.example.signtalk.databinding.FragmentSettingsBinding
 import kotlinx.coroutines.launch
@@ -54,6 +56,27 @@ class SettingsFragment : Fragment() {
         binding.mockRecognitionSwitch.setOnCheckedChangeListener { _, checked ->
             if (!updatingFromState) viewModel.setUseMockRecognition(checked)
         }
+        binding.vibrationSwitch.setOnCheckedChangeListener { _, checked ->
+            if (!updatingFromState) viewModel.setVibrationEnabled(checked)
+        }
+        binding.soundEffectsSwitch.setOnCheckedChangeListener { _, checked ->
+            if (!updatingFromState) viewModel.setSoundEffectsEnabled(checked)
+        }
+        binding.highContrastSwitch.setOnCheckedChangeListener { _, checked ->
+            // Guard against re-firing after recreate() (which would loop forever).
+            if (!updatingFromState && checked != viewModel.settings.value.highContrast) {
+                viewModel.setHighContrast(checked).invokeOnCompletion {
+                    // The theme is applied in MainActivity.onCreate, so rebuild the screen.
+                    activity?.runOnUiThread { activity?.recreate() }
+                }
+            }
+        }
+        binding.performanceLoggingSwitch.setOnCheckedChangeListener { _, checked ->
+            if (!updatingFromState) viewModel.setPerformanceLogging(checked)
+        }
+        binding.tutorialButton.setOnClickListener {
+            findNavController().navigate(R.id.action_settings_to_onboarding)
+        }
         binding.speechRateSlider.addOnChangeListener { _, value, fromUser ->
             binding.speechRateLabel.text = "Speech rate: ${"%.1f".format(value)}x"
             if (fromUser) viewModel.setSpeechRate(value)
@@ -70,6 +93,10 @@ class SettingsFragment : Fragment() {
                     binding.autoSpeakSwitch.isChecked = settings.autoSpeak
                     binding.frontCameraSwitch.isChecked = settings.useFrontCamera
                     binding.mockRecognitionSwitch.isChecked = settings.useMockRecognition
+                    binding.vibrationSwitch.isChecked = settings.vibrationEnabled
+                    binding.soundEffectsSwitch.isChecked = settings.soundEffectsEnabled
+                    binding.highContrastSwitch.isChecked = settings.highContrast
+                    binding.performanceLoggingSwitch.isChecked = settings.performanceLogging
                     binding.speechRateSlider.value = settings.speechRate.coerceIn(0.5f, 2.0f)
                     binding.speechRateLabel.text = "Speech rate: ${"%.1f".format(settings.speechRate)}x"
                     binding.confidenceSlider.value = settings.confidenceThreshold.coerceIn(0.3f, 0.95f)

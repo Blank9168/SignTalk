@@ -31,6 +31,7 @@ class SignClassifier(private val context: Context) {
         const val SEQUENCE_LENGTH = 30
         const val FEATURES_PER_FRAME = 126
         const val FEATURES_WITH_LOCATION = 134
+        const val NONE_LABEL = "none"
     }
 
     /** Per-frame feature count of the loaded model: 126 (hands only) or 134 (hands + body location). */
@@ -47,6 +48,13 @@ class SignClassifier(private val context: Context) {
         private set
     var isModelAvailable: Boolean = false
         private set
+
+    /**
+     * Index of the optional `none` (not-a-sign) class, or -1 when the loaded model has none.
+     * Train with `python ai/training/train.py --include-none`; `none` is appended last in
+     * labels.json so the indices of the 50 real signs never change.
+     */
+    val noneIndex: Int get() = labelEntries.indexOfFirst { it.label == NONE_LABEL }
 
     /**
      * Loads the classifier. When [preferLocation] is true (the pose model is available) and
@@ -84,7 +92,7 @@ class SignClassifier(private val context: Context) {
         val arr = JSONObject(json).getJSONArray("labels")
         (0 until arr.length()).map { i ->
             val item = arr.getJSONObject(i)
-            LabelEntry(item.getString("label"), item.getString("displayName"), item.getString("emoji"))
+            LabelEntry(item.getString("label"), item.getString("displayName"), item.optString("emoji", ""))
         }
     } catch (e: Exception) {
         emptyList()
@@ -99,6 +107,14 @@ class SignClassifier(private val context: Context) {
 
     /** Classifies a flattened (SEQUENCE_LENGTH * FEATURES_PER_FRAME) sequence. Null if model/labels aren't loaded. */
     fun classify(sequence: FloatArray): Pair<Int, Float>? {
+        val probs = probabilities(sequence) ?: return null
+        var bestIdx = 0
+        for (i in probs.indices) if (probs[i] > probs[bestIdx]) bestIdx = i
+        return bestIdx to probs[bestIdx]
+    }
+
+    /** Softmax probabilities for every class (same order as [labelEntries]). */
+    fun probabilities(sequence: FloatArray): FloatArray? {
         val interp = interpreter ?: return null
         val numClasses = labelEntries.size
         if (numClasses == 0) return null
@@ -114,11 +130,7 @@ class SignClassifier(private val context: Context) {
         }
         val output = Array(1) { FloatArray(numClasses) }
         interp.run(input, output)
-
-        val probs = softmax(output[0])
-        var bestIdx = 0
-        for (i in probs.indices) if (probs[i] > probs[bestIdx]) bestIdx = i
-        return bestIdx to probs[bestIdx]
+        return softmax(output[0])
     }
 
     private fun softmax(logits: FloatArray): FloatArray {

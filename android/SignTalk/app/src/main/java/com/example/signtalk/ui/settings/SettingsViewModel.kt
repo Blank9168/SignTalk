@@ -22,4 +22,8 @@ class SettingsViewModel(
     fun setConfidenceThreshold(threshold: Float) = viewModelScope.launch { settingsRepository.setConfidenceThreshold(threshold) }
     fun setUseFrontCamera(useFront: Boolean) = viewModelScope.launch { settingsRepository.setUseFrontCamera(useFront) }
     fun setUseMockRecognition(useMock: Boolean) = viewModelScope.launch { settingsRepository.setUseMockRecognition(useMock) }
+    fun setVibrationEnabled(enabled: Boolean) = viewModelScope.launch { settingsRepository.setVibrationEnabled(enabled) }
+    fun setSoundEffectsEnabled(enabled: Boolean) = viewModelScope.launch { settingsRepository.setSoundEffectsEnabled(enabled) }
+    fun setHighContrast(enabled: Boolean) = viewModelScope.launch { settingsRepository.setHighContrast(enabled) }
+    fun setPerformanceLogging(enabled: Boolean) = viewModelScope.launch { settingsRepository.setPerformanceLogging(enabled) }
 }

@@ -17,7 +17,20 @@
             app:exitAnim="@anim/tab_exit"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_splash_to_onboarding"
+            app:destination="@id/onboardingFragment"
+            app:enterAnim="@anim/tab_enter"
+            app:exitAnim="@anim/tab_exit"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
     </fragment>
+
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.example.signtalk.ui.onboarding.OnboardingFragment"
+        android:label="How to use SignTalk"
+        tools:layout="@layout/fragment_onboarding" />
 
     <fragment
         android:id="@+id/homeFragment"
@@ -46,6 +59,13 @@
             app:popEnterAnim="@anim/nav_pop_enter"
             app:popExitAnim="@anim/nav_pop_exit" />
         <action
+            android:id="@+id/action_home_to_onboarding"
+            app:destination="@id/onboardingFragment"
+            app:enterAnim="@anim/nav_enter"
+            app:exitAnim="@anim/nav_exit"
+            app:popEnterAnim="@anim/nav_pop_enter"
+            app:popExitAnim="@anim/nav_pop_exit" />
+        <action
             android:id="@+id/action_home_to_settings"
             app:destination="@id/settingsFragment"
             app:enterAnim="@anim/nav_enter"
@@ -57,7 +77,7 @@
     <fragment
         android:id="@+id/recognitionFragment"
         android:name="com.example.signtalk.ui.recognition.RecognitionFragment"
-        android:label="Sign to Text &amp; Speech"
+        android:label="Recognize Sign"
         tools:layout="@layout/fragment_recognition" />
 
     <fragment
@@ -69,7 +89,7 @@
     <fragment
         android:id="@+id/dictionaryListFragment"
         android:name="com.example.signtalk.ui.dictionary.DictionaryListFragment"
-        android:label="FSL Dictionary"
+        android:label="Sign Dictionary"
         tools:layout="@layout/fragment_dictionary_list">
         <action
             android:id="@+id/action_dictionaryList_to_detail"
@@ -94,6 +114,14 @@
         android:id="@+id/settingsFragment"
         android:name="com.example.signtalk.ui.settings.SettingsFragment"
         android:label="Settings"
-        tools:layout="@layout/fragment_settings" />
+        tools:layout="@layout/fragment_settings">
+        <action
+            android:id="@+id/action_settings_to_onboarding"
+            app:destination="@id/onboardingFragment"
+            app:enterAnim="@anim/nav_enter"
+            app:exitAnim="@anim/nav_exit"
+            app:popEnterAnim="@anim/nav_pop_enter"
+            app:popExitAnim="@anim/nav_pop_exit" />
+    </fragment>
 
 </navigation>

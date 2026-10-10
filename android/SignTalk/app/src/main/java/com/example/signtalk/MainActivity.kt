@@ -17,6 +17,8 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.signtalk.databinding.ActivityMainBinding
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 /**
  * Single Activity + Jetpack Navigation Component (Fragments), XML layouts
@@ -39,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         R.id.dictionaryListFragment
     )
 
+    private var highContrast = false
     private var systemBarInsets: Insets = Insets.NONE
     private var imeBottomInset: Int = 0
 
@@ -46,6 +49,14 @@ class MainActivity : AppCompatActivity() {
         // Draw behind the status and navigation bars on every Android version
         // (Android 15 forces this anyway), and pad content by the bar insets below.
         enableEdgeToEdge()
+        // High-contrast option (Settings). Read once, synchronously, so the very first frame
+        // already uses the right theme; SettingsFragment recreates the activity on change.
+        highContrast = runCatching {
+            runBlocking {
+                (application as SignTalkApp).container.settingsRepository.settings.first().highContrast
+            }
+        }.getOrDefault(false)
+        if (highContrast) setTheme(R.style.Theme_SignTalk_HighContrast)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -85,7 +96,7 @@ class MainActivity : AppCompatActivity() {
             applyContentInsets()
             // Splash sits on the dark teal gradient: always use light status-bar icons there.
             WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars =
-                destination.id != R.id.splashFragment && !isNightMode()
+                destination.id != R.id.splashFragment && !isNightMode() && !highContrast
         }
     }
 
@@ -125,7 +136,8 @@ class MainActivity : AppCompatActivity() {
     private fun applyContentInsets() {
         val destinationId = navController.currentDestination?.id
         val isSplash = destinationId == R.id.splashFragment
-        val isHome = destinationId == R.id.homeFragment
+        // Home and the tutorial draw their own headers, so they skip the shared toolbar.
+        val isHome = destinationId == R.id.homeFragment || destinationId == R.id.onboardingFragment
         val keyboardOpen = imeBottomInset > 0
         val showBottomNav = destinationId != null && destinationId in tabDestinations && !keyboardOpen
 

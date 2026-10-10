@@ -1,0 +1,7 @@
+grouping,group,n,correct,accuracy
+source,asl_citizen,23,18,0.7826
+source,asl_citizen_concat,6,5,0.8333
+source,fsl105,99,99,1.0000
+source,team_phone,47,47,1.0000
+language,ASL,50,44,0.8800
+language,FSL,125,125,1.0000

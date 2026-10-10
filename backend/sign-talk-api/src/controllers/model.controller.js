@@ -1,5 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const ModelVersion = require("../models/ModelVersion");
+const { recordAudit } = require("../utils/audit");
 
 // GET /api/model/version -- the currently-active trained model's metadata.
 // The app can call this at startup to know the label order/count it should
@@ -49,6 +50,7 @@ const createVersion = asyncHandler(async (req, res) => {
     isActive: !!makeActive,
   });
 
+  await recordAudit(req, { action: "model.version.create", entityType: "model", entityId: version, after: created });
   res.status(201).json(created);
 });
 

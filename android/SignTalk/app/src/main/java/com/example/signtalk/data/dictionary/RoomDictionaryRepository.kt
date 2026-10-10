@@ -11,7 +11,22 @@ class RoomDictionaryRepository(
 
     suspend fun seedIfEmpty() {
         if (dao.count() == 0) {
-            dao.insertAll(seedDictionaryEntries)
+            dao.insertAll(seedDictionaryEntries.map { it.withBundledMetadata() })
+        } else {
+            backfillBundledMetadata()
+        }
+    }
+
+    /**
+     * Installs that seeded the dictionary before schema v3 have empty gloss/meaning/synonym
+     * columns on the bundled rows. Fill them from [signMetadata] (only rows still empty, so
+     * newer values from a backend sync are never overwritten).
+     */
+    private suspend fun backfillBundledMetadata() {
+        for (label in signMetadata.keys) {
+            val existing = dao.getByLabel(label) ?: continue
+            if (existing.isUserAdded || existing.gloss.isNotBlank()) continue
+            dao.update(existing.withBundledMetadata())
         }
     }
 
@@ -22,21 +37,38 @@ class RoomDictionaryRepository(
      * replaced, so a locally-attached [DictionaryEntity.videoUri] and the
      * row's [DictionaryEntity.isUserAdded] flag survive a sync. A remote
      * entry with no matching local row is inserted as new. Entries only
-     * present locally (e.g. anything the user added via "Add entry", or a
-     * row the server has since removed) are left untouched -- this is a
+     * present locally (e.g. anything the user added via "Add a sign", or a
+     * row the server has since archived) are left untouched -- this is a
      * one-way, additive/overwrite sync, not a mirror, so nothing the user
-     * added on-device can be deleted by a background sync.
+     * added on-device can be deleted by a background sync. Remote fields that
+     * are blank (older backend without the metadata) keep the local value.
      */
     suspend fun upsertFromRemote(remoteEntries: List<DictionaryEntry>) {
         for (remote in remoteEntries) {
             val existing = dao.getByLabel(remote.label)
             if (existing != null) {
+                if (existing.isUserAdded) continue // never overwrite the user's own entry
+                fun pick(remoteValue: String, local: String) = remoteValue.ifBlank { local }
                 dao.update(
                     existing.copy(
                         displayName = remote.displayName,
                         category = remote.category,
                         description = remote.description,
-                        emoji = remote.emoji
+                        emoji = remote.emoji,
+                        language = pick(remote.language, existing.language),
+                        gloss = pick(remote.gloss, existing.gloss),
+                        meaningEn = pick(remote.meaningEn, existing.meaningEn),
+                        meaningFil = pick(remote.meaningFil, existing.meaningFil),
+                        synonyms = if (remote.synonyms.isNotEmpty()) {
+                            remote.synonyms.joinToString(SYNONYM_SEPARATOR) { it.lowercase() }
+                        } else {
+                            existing.synonyms
+                        },
+                        signType = pick(remote.signType, existing.signType),
+                        hands = pick(remote.hands, existing.hands),
+                        source = pick(remote.source, existing.source),
+                        validationStatus = pick(remote.validationStatus, existing.validationStatus),
+                        validatedBy = pick(remote.validatedBy, existing.validatedBy)
                     )
                 )
             } else {
@@ -48,11 +80,16 @@ class RoomDictionaryRepository(
     override fun observeEntries(query: String): Flow<List<DictionaryEntry>> =
         dao.observeEntries(query.trim()).map { list -> list.map { it.toDomain() } }
 
+    override suspend fun getAll(): List<DictionaryEntry> = dao.getAll().map { it.toDomain() }
+
     override suspend fun getEntry(id: Long): DictionaryEntry? =
         dao.getById(id)?.toDomain()
 
     override suspend fun findByLabel(label: String): DictionaryEntry? =
         dao.getByLabel(label)?.toDomain()
+
+    override suspend fun findBySynonym(phrase: String): DictionaryEntry? =
+        dao.getBySynonym(phrase.trim().lowercase())?.toDomain()
 
     override suspend fun addEntry(entry: DictionaryEntry): Long =
         dao.insert(entry.copy(isUserAdded = true).toEntity())
@@ -63,5 +100,9 @@ class RoomDictionaryRepository(
 
     override suspend fun setVideoUri(id: Long, videoUri: String?) {
         dao.updateVideoUri(id, videoUri)
+    }
+
+    override suspend fun setValidationStatus(id: Long, status: String) {
+        dao.updateValidationStatus(id, status)
     }
 }

@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:gravity="center"
-            android:text="Filipino Sign Language, in both directions"
+            android:text="Recognition of selected FSL and ASL signs"
             android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="@color/on_brand_muted" />
     </LinearLayout>

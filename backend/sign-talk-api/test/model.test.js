@@ -2,6 +2,7 @@ const request = require("supertest");
 
 jest.mock("../src/models/ModelVersion");
 jest.mock("../src/models/User");
+jest.mock("../src/models/AuditLog");
 
 const ModelVersion = require("../src/models/ModelVersion");
 const User = require("../src/models/User");

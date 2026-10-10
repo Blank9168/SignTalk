@@ -43,4 +43,43 @@
     </style>
 
     <style name="Theme.SignTalk" parent="Base.Theme.SignTalk" />
+
+    <!-- Settings > High contrast: black background, white text, yellow accents. Readable in
+         bright outdoor light and for low vision. Applied by MainActivity before setContentView. -->
+    <style name="Theme.SignTalk.HighContrast" parent="Theme.SignTalk.Components">
+        <item name="colorPrimary">@color/hc_primary</item>
+        <item name="colorOnPrimary">@color/hc_on_primary</item>
+        <item name="colorPrimaryContainer">@color/hc_primary</item>
+        <item name="colorOnPrimaryContainer">@color/hc_on_primary</item>
+        <item name="colorSecondary">@color/hc_primary</item>
+        <item name="colorOnSecondary">@color/hc_on_primary</item>
+        <item name="colorSecondaryContainer">@color/hc_surface_container</item>
+        <item name="colorOnSecondaryContainer">@color/hc_on_surface</item>
+        <item name="colorTertiary">@color/hc_primary</item>
+        <item name="colorOnTertiary">@color/hc_on_primary</item>
+        <item name="colorTertiaryContainer">@color/hc_surface_container</item>
+        <item name="colorOnTertiaryContainer">@color/hc_on_surface</item>
+        <item name="colorError">#FFFF6E6E</item>
+        <item name="colorOnError">#FF000000</item>
+        <item name="colorErrorContainer">#FF000000</item>
+        <item name="colorOnErrorContainer">#FFFF8A8A</item>
+        <item name="colorOnBackground">@color/hc_on_surface</item>
+        <item name="colorSurface">@color/hc_surface</item>
+        <item name="colorOnSurface">@color/hc_on_surface</item>
+        <item name="colorSurfaceVariant">@color/hc_surface_container</item>
+        <item name="colorOnSurfaceVariant">@color/hc_on_surface</item>
+        <item name="colorOutline">@color/hc_outline</item>
+        <item name="colorOutlineVariant">@color/hc_outline</item>
+        <item name="colorSurfaceContainerLowest">@color/hc_surface</item>
+        <item name="colorSurfaceContainerLow">@color/hc_surface_container</item>
+        <item name="colorSurfaceContainer">@color/hc_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/hc_surface_container</item>
+        <item name="colorSurfaceContainerHighest">#FF2A2A2A</item>
+        <item name="android:colorBackground">@color/hc_background</item>
+        <item name="colorSurfaceInverse">@color/hc_on_surface</item>
+        <item name="colorOnSurfaceInverse">@color/hc_surface</item>
+        <item name="colorPrimaryInverse">@color/hc_on_primary</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
 </resources>

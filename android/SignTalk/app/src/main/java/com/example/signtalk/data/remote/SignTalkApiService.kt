@@ -3,6 +3,8 @@ package com.example.signtalk.data.remote
 import com.example.signtalk.data.remote.dto.DictionaryListResponseDto
 import com.example.signtalk.data.remote.dto.ModelVersionDto
 import com.example.signtalk.data.remote.dto.RecognitionLogRequestDto
+import com.example.signtalk.data.remote.dto.SubmissionRequestDto
+import com.example.signtalk.data.remote.dto.SubmissionResponseDto
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
@@ -31,4 +33,10 @@ interface SignTalkApiService {
     // invoking Gson, which is all this fire-and-forget call needs.
     @POST("api/logs/recognition")
     suspend fun logRecognition(@Body body: RecognitionLogRequestDto): Response<ResponseBody>
+
+    // "Add a sign": sends the entry to the review queue (Submitted -> For Review -> Verified ->
+    // Published). It is never published directly and never changes the recognition model.
+    // 201 = queued, 400 = validation error, 409 = duplicate, 429 = rate-limited.
+    @POST("api/submissions")
+    suspend fun submitSign(@Body body: SubmissionRequestDto): Response<SubmissionResponseDto>
 }

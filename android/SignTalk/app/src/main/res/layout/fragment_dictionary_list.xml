@@ -21,7 +21,7 @@
             android:id="@+id/searchInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Search signs"
+            android:hint="Search in English or Filipino"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:paddingTop="16dp"
@@ -141,7 +141,7 @@
             android:layout_marginTop="48dp"
             android:drawablePadding="12dp"
             android:gravity="center"
-            android:text="No signs found.\nTry a different word or filter."
+            android:text="No signs found.\nTry another word, or check the spelling."
             android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:visibility="gone"
@@ -155,7 +155,7 @@
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
             android:contentDescription="Add a sign"
-            android:text="Add sign"
+            android:text="Add a sign"
             app:icon="@drawable/ic_add" />
     </FrameLayout>
 

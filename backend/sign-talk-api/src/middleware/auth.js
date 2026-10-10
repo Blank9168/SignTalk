@@ -70,13 +70,29 @@ const optionalAuth = asyncHandler(async (req, res, next) => {
   next();
 });
 
-/** Must follow requireAuth. 403s unless req.user.role === "admin". */
-const requireAdmin = (req, res, next) => {
-  if (!req.user || req.user.role !== "admin") {
-    res.status(403);
-    throw new Error("This action requires an admin account.");
-  }
-  next();
+/**
+ * Must follow requireAuth. 403s unless req.user.role is one of `roles`.
+ *   requireRole("admin")
+ *   requireRole("validator", "admin")
+ */
+const requireRole = (...roles) => {
+  const allowed = roles.flat();
+  const message =
+    allowed.length === 1 && allowed[0] === "admin"
+      ? "This action requires an admin account."
+      : `This action requires one of these roles: ${allowed.join(", ")}.`;
+  return (req, res, next) => {
+    if (!req.user || !allowed.includes(req.user.role)) {
+      res.status(403);
+      return next(new Error(message));
+    }
+    return next();
+  };
 };
 
-module.exports = { requireAuth, optionalAuth, requireAdmin };
+/** Must follow requireAuth. 403s unless req.user.role === "admin". */
+const requireAdmin = requireRole("admin");
+/** Must follow requireAuth. Validators and admins. */
+const requireValidator = requireRole("validator", "admin");
+
+module.exports = { requireAuth, optionalAuth, requireRole, requireAdmin, requireValidator };

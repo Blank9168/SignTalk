@@ -23,8 +23,8 @@ sealed class TranslateUiState {
         val currentIndex: Int
     ) : TranslateUiState()
 
-    /** Everything typed/spoken failed to match any sign in the dictionary. */
-    data class NoSignsFound(val text: String) : TranslateUiState()
+    /** Everything typed/spoken failed to match any sign; [tokens] carry "did you mean" suggestions. */
+    data class NoSignsFound(val text: String, val tokens: List<TranslationToken> = emptyList()) : TranslateUiState()
 }
 
 /**
@@ -49,7 +49,7 @@ class TranslateViewModel(
             val tokens = matcher.match(text)
             val firstMatchedIndex = tokens.indexOfFirst { it is TranslationToken.Matched }
             _uiState.value = if (firstMatchedIndex == -1) {
-                TranslateUiState.NoSignsFound(text)
+                TranslateUiState.NoSignsFound(text, tokens)
             } else {
                 TranslateUiState.Result(tokens, firstMatchedIndex)
             }

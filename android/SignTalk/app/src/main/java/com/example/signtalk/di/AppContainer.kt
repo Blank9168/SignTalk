@@ -47,14 +47,26 @@ class AppContainer(context: Context) {
     private suspend fun syncDictionaryFromBackend() {
         try {
             val response = RetrofitClient.apiService.getDictionary()
-            val remoteEntries = response.entries.map { dto ->
+            val remoteEntries = response.entries.orEmpty().mapNotNull { dto ->
+                val slug = dto.slug ?: return@mapNotNull null
+                val label = dto.label ?: return@mapNotNull null
                 DictionaryEntry(
-                    label = dto.slug,
-                    displayName = dto.label,
-                    category = dto.category,
-                    description = dto.description,
-                    emoji = dto.emoji,
-                    isUserAdded = false
+                    label = slug,
+                    displayName = label,
+                    category = dto.category.orEmpty(),
+                    description = dto.description.orEmpty(),
+                    emoji = dto.emoji.orEmpty(),
+                    isUserAdded = false,
+                    language = dto.language.orEmpty(),
+                    gloss = dto.gloss.orEmpty(),
+                    meaningEn = dto.meaningEn.orEmpty(),
+                    meaningFil = dto.meaningFil.orEmpty(),
+                    synonyms = dto.synonyms.orEmpty(),
+                    signType = dto.signType.orEmpty(),
+                    hands = dto.hands.orEmpty(),
+                    source = dto.source.orEmpty(),
+                    validationStatus = dto.validationStatus.orEmpty(),
+                    validatedBy = dto.validatedBy.orEmpty()
                 )
             }
             roomDictionaryRepository.upsertFromRemote(remoteEntries)

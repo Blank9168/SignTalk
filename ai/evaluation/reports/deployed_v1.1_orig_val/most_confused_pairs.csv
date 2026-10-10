@@ -1,0 +1,7 @@
+true,predicted,count,true_support,rate,reverse_count,likely_reason
+father,mother,1,2,0.500,0,"ASL FATHER/MOTHER use the same open-5 handshape and tap; they differ only in location (forehead vs chin). Features are wrist-centred hand landmarks with no face reference, so location is invisible to the model."
+girl,itim,1,2,0.500,0,"(add explanation: compare handshape, movement, location, one vs two hands)"
+girl,magandang_umaga,1,2,0.500,0,"(add explanation: compare handshape, movement, location, one vs two hands)"
+good_afternoon,married,1,2,0.500,0,"(add explanation: compare handshape, movement, location, one vs two hands)"
+im_fine,asul,1,2,0.500,0,"(add explanation: compare handshape, movement, location, one vs two hands)"
+youre_welcome,thank_you,1,2,0.500,0,Likely: both use a flat hand moving away from the chin/body area; check the clips - the distinguishing part is short.

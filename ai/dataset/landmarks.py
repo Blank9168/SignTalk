@@ -20,14 +20,23 @@ in frame or how big it appears.
 """
 
 import numpy as np
-import mediapipe as mp
+
+# mediapipe is only needed by HandLandmarkExtractor (video -> landmarks). The
+# helpers below (normalize_hand, trim_to_hand_frames, sample_to_fixed_length)
+# are pure numpy and are imported by training/ and evaluation/ code that only
+# reads .npy files, so a missing or too-new mediapipe (no legacy
+# `solutions.hands`) must not break those imports.
+try:
+    import mediapipe as mp
+    mp_hands = mp.solutions.hands
+except (ImportError, AttributeError):  # not installed, or >0.10.14 without solutions
+    mp = None
+    mp_hands = None
 
 NUM_HANDS = 2
 LANDMARKS_PER_HAND = 21
 COORDS_PER_LANDMARK = 3
 FEATURES_PER_FRAME = NUM_HANDS * LANDMARKS_PER_HAND * COORDS_PER_LANDMARK  # 126
-
-mp_hands = mp.solutions.hands
 
 WRIST_IDX = 0
 MIDDLE_MCP_IDX = 9  # stable reference point for hand "size"
@@ -66,6 +75,10 @@ class HandLandmarkExtractor:
 
     def __init__(self, static_image_mode=False, min_detection_confidence=0.5,
                  min_tracking_confidence=0.5):
+        if mp_hands is None:
+            raise ImportError(
+                "HandLandmarkExtractor needs the legacy MediaPipe Hands API: "
+                'pip install "mediapipe==0.10.14" (Python 3.9-3.12).')
         self._hands = mp_hands.Hands(
             static_image_mode=static_image_mode,
             max_num_hands=NUM_HANDS,

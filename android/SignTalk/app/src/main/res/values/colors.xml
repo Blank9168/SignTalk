@@ -99,4 +99,29 @@
     <color name="md_dark_inverseSurface">#FFDEE4E1</color>
     <color name="md_dark_inverseOnSurface">#FF2B3230</color>
     <color name="md_dark_inversePrimary">#FF00796B</color>
+
+    <!-- Recognition status pills (Detecting / Recognized / Not sure / Unknown). Night
+         variants live in values-night/colors.xml. Contrast >= 7:1 for text on its pill. -->
+    <color name="status_success_bg">#FFC8E6C9</color>
+    <color name="status_success_fg">#FF0B3D0F</color>
+    <color name="status_warning_bg">#FFFFE08A</color>
+    <color name="status_warning_fg">#FF3D2B00</color>
+    <color name="status_error_bg">#FFFFDAD6</color>
+    <color name="status_error_fg">#FF410002</color>
+    <color name="status_info_bg">#FFCCE8E2</color>
+    <color name="status_info_fg">#FF05201C</color>
+    <color name="hand_guide">#CCFFFFFF</color>
+    <!-- Confidence bar colors (were hard-coded in RecognitionFragment). -->
+    <color name="confidence_high">@color/success_green</color>
+    <color name="confidence_medium">@color/warn_amber</color>
+    <color name="confidence_low">@color/error_red</color>
+
+    <!-- High-contrast theme (Settings > High contrast): black, white and yellow only. -->
+    <color name="hc_background">#FF000000</color>
+    <color name="hc_surface">#FF000000</color>
+    <color name="hc_surface_container">#FF121212</color>
+    <color name="hc_on_surface">#FFFFFFFF</color>
+    <color name="hc_primary">#FFFFEB3B</color>
+    <color name="hc_on_primary">#FF000000</color>
+    <color name="hc_outline">#FFFFFFFF</color>
 </resources>

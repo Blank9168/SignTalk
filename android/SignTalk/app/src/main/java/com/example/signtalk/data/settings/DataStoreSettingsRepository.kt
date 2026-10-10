@@ -22,6 +22,11 @@ class DataStoreSettingsRepository(private val context: Context) : SettingsReposi
         val USE_FRONT_CAMERA = booleanPreferencesKey("use_front_camera")
         val USE_MOCK_RECOGNITION = booleanPreferencesKey("use_mock_recognition")
         val BACKEND_MODEL_INFO = stringPreferencesKey("backend_model_info")
+        val VIBRATION = booleanPreferencesKey("vibration_enabled")
+        val SOUND_EFFECTS = booleanPreferencesKey("sound_effects_enabled")
+        val HIGH_CONTRAST = booleanPreferencesKey("high_contrast")
+        val ONBOARDING_DONE = booleanPreferencesKey("onboarding_done")
+        val PERFORMANCE_LOGGING = booleanPreferencesKey("performance_logging")
     }
 
     override val settings: Flow<AppSettings> = context.settingsDataStore.data.map { prefs ->
@@ -31,7 +36,12 @@ class DataStoreSettingsRepository(private val context: Context) : SettingsReposi
             confidenceThreshold = prefs[Keys.CONFIDENCE_THRESHOLD] ?: 0.6f,
             useFrontCamera = prefs[Keys.USE_FRONT_CAMERA] ?: true,
             useMockRecognition = prefs[Keys.USE_MOCK_RECOGNITION] ?: false,
-            backendModelInfo = prefs[Keys.BACKEND_MODEL_INFO]
+            backendModelInfo = prefs[Keys.BACKEND_MODEL_INFO],
+            vibrationEnabled = prefs[Keys.VIBRATION] ?: true,
+            soundEffectsEnabled = prefs[Keys.SOUND_EFFECTS] ?: false,
+            highContrast = prefs[Keys.HIGH_CONTRAST] ?: false,
+            onboardingDone = prefs[Keys.ONBOARDING_DONE] ?: false,
+            performanceLogging = prefs[Keys.PERFORMANCE_LOGGING] ?: false
         )
     }
 
@@ -57,5 +67,25 @@ class DataStoreSettingsRepository(private val context: Context) : SettingsReposi
 
     override suspend fun setBackendModelInfo(info: String) {
         context.settingsDataStore.edit { it[Keys.BACKEND_MODEL_INFO] = info }
+    }
+
+    override suspend fun setVibrationEnabled(enabled: Boolean) {
+        context.settingsDataStore.edit { it[Keys.VIBRATION] = enabled }
+    }
+
+    override suspend fun setSoundEffectsEnabled(enabled: Boolean) {
+        context.settingsDataStore.edit { it[Keys.SOUND_EFFECTS] = enabled }
+    }
+
+    override suspend fun setHighContrast(enabled: Boolean) {
+        context.settingsDataStore.edit { it[Keys.HIGH_CONTRAST] = enabled }
+    }
+
+    override suspend fun setOnboardingDone(done: Boolean) {
+        context.settingsDataStore.edit { it[Keys.ONBOARDING_DONE] = done }
+    }
+
+    override suspend fun setPerformanceLogging(enabled: Boolean) {
+        context.settingsDataStore.edit { it[Keys.PERFORMANCE_LOGGING] = enabled }
     }
 }

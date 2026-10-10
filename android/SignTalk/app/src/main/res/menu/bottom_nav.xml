@@ -8,11 +8,11 @@
     <item
         android:id="@id/recognitionFragment"
         android:icon="@drawable/ic_sign_hand"
-        android:title="Sign" />
+        android:title="Recognize" />
     <item
         android:id="@id/translateFragment"
         android:icon="@drawable/ic_record_voice"
-        android:title="Translate" />
+        android:title="Text to Sign" />
     <item
         android:id="@id/dictionaryListFragment"
         android:icon="@drawable/ic_book"

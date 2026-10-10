@@ -1,0 +1,59 @@
+Model: android/SignTalk/app/src/main/assets/sign_lstm_iso.tflite
+Test set: train.py validation split of the original 889 clips (seed 42, 20% per class) - the held-out split of the deployed model
+
+                  precision    recall  f1-score   support
+
+             isa     1.0000    1.0000    1.0000         5
+          dalawa     1.0000    1.0000    1.0000         5
+           tatlo     1.0000    1.0000    1.0000         5
+            apat     1.0000    1.0000    1.0000         5
+            lima     1.0000    1.0000    1.0000         5
+            anim     1.0000    1.0000    1.0000         5
+            pito     1.0000    1.0000    1.0000         5
+            walo     1.0000    1.0000    1.0000         5
+           siyam     1.0000    1.0000    1.0000         5
+           sampu     1.0000    1.0000    1.0000         5
+            asul     0.8333    1.0000    0.9091         5
+           berde     1.0000    1.0000    1.0000         5
+            pula     1.0000    1.0000    1.0000         5
+      kayumanggi     1.0000    1.0000    1.0000         5
+            itim     0.8333    1.0000    0.9091         5
+            puti     1.0000    1.0000    1.0000         5
+           dilaw     1.0000    1.0000    1.0000         5
+           kahel     1.0000    1.0000    1.0000         5
+             abo     1.0000    1.0000    1.0000         5
+           rosas     1.0000    1.0000    1.0000         5
+            lila     1.0000    1.0000    1.0000         5
+       maliwanag     1.0000    1.0000    1.0000         5
+ magandang_umaga     0.8333    1.0000    0.9091         5
+ magandang_hapon     1.0000    1.0000    1.0000         5
+  magandang_gabi     1.0000    1.0000    1.0000         5
+    good_morning     1.0000    1.0000    1.0000         2
+  good_afternoon     1.0000    0.5000    0.6667         2
+    good_evening     1.0000    1.0000    1.0000         2
+           hello     1.0000    1.0000    1.0000         2
+     how_are_you     1.0000    1.0000    1.0000         2
+         im_fine     1.0000    0.5000    0.6667         2
+nice_to_meet_you     1.0000    1.0000    1.0000         2
+       thank_you     0.6667    1.0000    0.8000         2
+   youre_welcome     1.0000    0.5000    0.6667         2
+see_you_tomorrow     1.0000    1.0000    1.0000         2
+      understand     1.0000    1.0000    1.0000         2
+ dont_understand     1.0000    1.0000    1.0000         2
+            know     1.0000    1.0000    1.0000         2
+       dont_know     1.0000    1.0000    1.0000         2
+             yes     1.0000    1.0000    1.0000         2
+              no     1.0000    1.0000    1.0000         2
+           wrong     1.0000    1.0000    1.0000         2
+         correct     1.0000    1.0000    1.0000         2
+            slow     1.0000    1.0000    1.0000         2
+            fast     1.0000    1.0000    1.0000         2
+          father     1.0000    0.5000    0.6667         2
+          mother     0.6667    1.0000    0.8000         2
+             boy     1.0000    1.0000    1.0000         2
+            girl     0.0000    0.0000    0.0000         2
+         married     0.6667    1.0000    0.8000         2
+
+        accuracy                         0.9657       175
+       macro avg     0.9500    0.9400    0.9359       175
+    weighted avg     0.9629    0.9657    0.9587       175

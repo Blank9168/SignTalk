@@ -1,0 +1,101 @@
+file,method,source,seed,synthetic,note
+synthetic_cross_shuffle_000.npy,cross_shuffle,anim;apat;asul;berde;correct;dalawa;girl;good_evening;isa;know;lima;magandang_umaga;maliwanag;married;pito;pula;puti;rosas;see_you_tomorrow;siyam;tatlo;understand;wrong,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_001.npy,cross_shuffle,abo;apat;asul;dilaw;dont_know;fast;good_morning;hello;isa;kahel;kayumanggi;know;lima;magandang_hapon;magandang_umaga;pito;rosas;slow;tatlo;walo;wrong,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_002.npy,cross_shuffle,apat;asul;dalawa;fast;good_morning;hello;how_are_you;isa;itim;kahel;kayumanggi;lila;lima;magandang_hapon;magandang_umaga;pito;pula;puti;slow;tatlo;walo;wrong;youre_welcome,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_003.npy,cross_shuffle,apat;berde;boy;dalawa;dont_know;dont_understand;fast;good_evening;kahel;lila;magandang_gabi;magandang_hapon;magandang_umaga;maliwanag;mother;pula;puti;rosas;sampu;thank_you;walo;youre_welcome,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_004.npy,cross_shuffle,apat;berde;dalawa;dilaw;fast;good_afternoon;good_morning;hello;im_fine;isa;kayumanggi;know;magandang_gabi;magandang_hapon;mother;pito;pula;rosas;sampu;siyam;tatlo;understand;wrong;yes;youre_welcome,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_005.npy,cross_shuffle,anim;apat;berde;boy;dalawa;dont_understand;fast;father;girl;hello;isa;kahel;kayumanggi;lila;magandang_gabi;magandang_hapon;mother;nice_to_meet_you;puti;rosas;slow;thank_you,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_006.npy,cross_shuffle,abo;apat;berde;correct;dalawa;dont_know;girl;hello;kahel;know;lila;lima;magandang_gabi;magandang_hapon;maliwanag;mother;no;pula;sampu;siyam;yes,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_007.npy,cross_shuffle,abo;asul;berde;boy;dalawa;dilaw;dont_understand;fast;father;girl;how_are_you;isa;itim;kahel;know;lila;magandang_gabi;magandang_umaga;maliwanag;pito;rosas;tatlo;thank_you;understand,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_008.npy,cross_shuffle,abo;anim;apat;asul;berde;correct;dilaw;dont_know;girl;hello;how_are_you;isa;lila;lima;magandang_gabi;magandang_umaga;maliwanag;rosas;see_you_tomorrow;siyam;thank_you;walo;youre_welcome,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_009.npy,cross_shuffle,abo;anim;apat;asul;berde;boy;dalawa;how_are_you;kahel;kayumanggi;lima;magandang_hapon;magandang_umaga;pito;pula;puti;tatlo;understand;walo;youre_welcome,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_010.npy,cross_shuffle,abo;anim;apat;dalawa;girl;hello;im_fine;isa;itim;know;lila;lima;magandang_gabi;magandang_hapon;maliwanag;pula;siyam;slow;tatlo;walo;wrong,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_011.npy,cross_shuffle,berde;boy;dont_understand;good_morning;itim;kahel;kayumanggi;know;lila;magandang_gabi;married;nice_to_meet_you;pito;pula;sampu;siyam;tatlo;thank_you;walo;wrong;yes,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_012.npy,cross_shuffle,asul;dalawa;dilaw;dont_understand;fast;good_morning;hello;isa;itim;kayumanggi;know;lila;magandang_gabi;magandang_hapon;married;rosas;see_you_tomorrow;slow;tatlo;walo;wrong;youre_welcome,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_013.npy,cross_shuffle,anim;apat;berde;dilaw;fast;girl;good_morning;isa;itim;magandang_gabi;magandang_hapon;magandang_umaga;maliwanag;nice_to_meet_you;pito;puti;see_you_tomorrow;tatlo;thank_you,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_014.npy,cross_shuffle,abo;anim;apat;asul;berde;dalawa;dont_know;good_afternoon;how_are_you;kayumanggi;lila;magandang_hapon;magandang_umaga;mother;pula;sampu;tatlo;thank_you;understand;walo,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_015.npy,cross_shuffle,anim;asul;berde;dilaw;dont_know;girl;how_are_you;isa;kahel;know;lila;lima;magandang_gabi;magandang_hapon;magandang_umaga;mother;pito;pula;sampu;siyam;slow;tatlo;understand;wrong;youre_welcome,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_016.npy,cross_shuffle,abo;anim;apat;asul;berde;dalawa;dilaw;dont_know;dont_understand;itim;lila;magandang_gabi;magandang_umaga;maliwanag;pito;puti;sampu;siyam;thank_you;walo;wrong;yes,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_017.npy,cross_shuffle,apat;berde;dilaw;fast;good_afternoon;hello;isa;kahel;kayumanggi;lila;magandang_gabi;magandang_umaga;married;pito;pula;sampu;thank_you;understand;youre_welcome,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_018.npy,cross_shuffle,anim;apat;asul;berde;boy;correct;dalawa;good_evening;how_are_you;isa;kahel;kayumanggi;lima;magandang_gabi;magandang_hapon;magandang_umaga;puti;siyam;tatlo;yes,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_019.npy,cross_shuffle,anim;apat;asul;berde;correct;dalawa;dont_know;father;girl;itim;kahel;lima;magandang_gabi;magandang_umaga;maliwanag;nice_to_meet_you;pito;rosas;slow;walo;yes,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_020.npy,cross_shuffle,abo;anim;asul;dalawa;dilaw;dont_understand;isa;itim;kahel;kayumanggi;lima;magandang_gabi;magandang_umaga;maliwanag;no;puti;rosas;sampu;siyam;thank_you;walo,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_021.npy,cross_shuffle,abo;anim;apat;berde;dalawa;dilaw;dont_know;father;good_morning;im_fine;kahel;kayumanggi;lima;magandang_hapon;magandang_umaga;married;nice_to_meet_you;pito;puti;sampu;tatlo;understand;wrong,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_022.npy,cross_shuffle,abo;asul;dalawa;fast;girl;good_evening;hello;itim;kahel;kayumanggi;lima;magandang_gabi;magandang_hapon;magandang_umaga;maliwanag;married;nice_to_meet_you;no;pula;rosas;sampu;siyam;understand;walo;youre_welcome,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_023.npy,cross_shuffle,abo;apat;dilaw;good_afternoon;good_evening;itim;kahel;know;lila;magandang_gabi;magandang_umaga;married;no;pito;pula;puti;rosas;siyam;tatlo;thank_you;understand;walo,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_cross_shuffle_024.npy,cross_shuffle,abo;apat;asul;boy;fast;father;girl;isa;kahel;lima;magandang_gabi;magandang_umaga;maliwanag;married;no;pula;puti;sampu;siyam;walo;wrong;youre_welcome,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_000.npy,splice,wrong/user_IMG_1186.npy + pito/12.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_001.npy,splice,itim/user_IMG_1048.npy + correct/user_IMG_0959.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_002.npy,splice,puti/0.npy + siyam/4.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_003.npy,splice,wrong/asl_4.npy + dont_know/asl_4.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_004.npy,splice,maliwanag/11.npy + apat/user_IMG_0939.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_005.npy,splice,walo/8.npy + asul/11.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_006.npy,splice,know/asl_0.npy + siyam/11.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_007.npy,splice,apat/15.npy + tatlo/1.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_008.npy,splice,isa/18.npy + puti/17.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_009.npy,splice,berde/19.npy + tatlo/18.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_010.npy,splice,boy/user_IMG_0955.npy + understand/user_IMG_1177.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_011.npy,splice,good_evening/asl_1.npy + magandang_gabi/14.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_012.npy,splice,no/user_IMG_1118.npy + maliwanag/2.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_013.npy,splice,magandang_gabi/user_IMG_1081.npy + walo/9.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_014.npy,splice,magandang_umaga/2.npy + lima/4.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_015.npy,splice,apat/user_IMG_0939.npy + dont_understand/asl_3.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_016.npy,splice,know/asl_0.npy + walo/13.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_017.npy,splice,lima/9.npy + anim/8.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_018.npy,splice,dilaw/4.npy + magandang_hapon/user_IMG_1084.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_019.npy,splice,boy/asl_0.npy + understand/user_IMG_1178.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_020.npy,splice,dilaw/2.npy + pula/user_IMG_1132.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_021.npy,splice,puti/16.npy + magandang_umaga/5.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_022.npy,splice,magandang_hapon/user_IMG_1082.npy + lila/16.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_023.npy,splice,dilaw/11.npy + father/user_IMG_0998.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_splice_024.npy,splice,kayumanggi/9.npy + magandang_hapon/12.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_000.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_001.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_002.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_003.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_004.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_005.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_006.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_007.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_008.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_009.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_010.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_011.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_012.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_013.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_014.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_015.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_016.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_017.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_018.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_019.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_020.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_021.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_022.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_023.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_rest_hold_024.npy,rest_hold,mean training hand pose,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_000.npy,random_walk,lila/18.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_001.npy,random_walk,yes/asl_3.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_002.npy,random_walk,puti/3.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_003.npy,random_walk,siyam/12.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_004.npy,random_walk,dont_know/asl_3.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_005.npy,random_walk,maliwanag/4.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_006.npy,random_walk,understand/user_IMG_1180.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_007.npy,random_walk,dalawa/13.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_008.npy,random_walk,slow/asl_4.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_009.npy,random_walk,dalawa/6.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_010.npy,random_walk,thank_you/user_IMG_1171.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_011.npy,random_walk,dilaw/1.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_012.npy,random_walk,magandang_gabi/5.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_013.npy,random_walk,pito/6.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_014.npy,random_walk,wrong/user_IMG_1188.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_015.npy,random_walk,good_evening/asl_1.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_016.npy,random_walk,pula/16.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_017.npy,random_walk,girl/user_IMG_1004.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_018.npy,random_walk,mother/asl_3.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_019.npy,random_walk,boy/asl_2.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_020.npy,random_walk,pito/13.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_021.npy,random_walk,dalawa/5.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_022.npy,random_walk,kahel/17.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_023.npy,random_walk,kayumanggi/18.npy,2026,yes,stopgap - replace with recorded non-sign clips
+synthetic_random_walk_024.npy,random_walk,anim/3.npy,2026,yes,stopgap - replace with recorded non-sign clips

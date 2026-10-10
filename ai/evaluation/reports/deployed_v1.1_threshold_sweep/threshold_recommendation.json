@@ -1,0 +1,61 @@
+{
+  "recommended_single_window": {
+    "threshold": 0.3,
+    "n": 175,
+    "n_accepted": 174,
+    "coverage": 0.9942857142857143,
+    "accepted_accuracy": 0.9712643678160919,
+    "correct_overall": 0.9657142857142857,
+    "accepted_error": 0.028735632183908066,
+    "none_n": 100,
+    "none_false_accept": 0.81
+  },
+  "recommended_stream_n3": {
+    "n_agree": 3,
+    "threshold": 0.7,
+    "n": 175,
+    "n_accepted": 166,
+    "coverage": 0.9485714285714286,
+    "accepted_accuracy": 0.9518072289156626,
+    "correct_overall": 0.9028571428571428,
+    "none_false_accept": 0.52
+  },
+  "alternative_with_none_cap": {
+    "threshold": 0.8,
+    "n": 175,
+    "n_accepted": 151,
+    "coverage": 0.8628571428571429,
+    "accepted_accuracy": 0.9933774834437086,
+    "correct_overall": 0.8571428571428571,
+    "accepted_error": 0.0066225165562914245,
+    "none_n": 100,
+    "none_false_accept": 0.18
+  },
+  "alternative_with_none_cap_stream_n3": {
+    "n_agree": 3,
+    "threshold": 0.95,
+    "n": 175,
+    "n_accepted": 12,
+    "coverage": 0.06857142857142857,
+    "accepted_accuracy": 1.0,
+    "correct_overall": 0.06857142857142857,
+    "none_false_accept": 0.04
+  },
+  "alt_max_none_accept": 0.2,
+  "app_threshold_row": {
+    "threshold": 0.6,
+    "n": 175,
+    "n_accepted": 168,
+    "coverage": 0.96,
+    "accepted_accuracy": 0.9880952380952381,
+    "correct_overall": 0.9485714285714286,
+    "accepted_error": 0.011904761904761862,
+    "none_n": 100,
+    "none_false_accept": 0.36
+  },
+  "target_accuracy": 0.95,
+  "max_none_accept": null,
+  "test_set": "train.py validation split of the original 889 clips (seed 42, 20% per class) - the held-out split of the deployed model",
+  "n": 175,
+  "none_n": 100
+}

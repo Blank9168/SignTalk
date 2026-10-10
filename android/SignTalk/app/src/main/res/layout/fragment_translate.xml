@@ -36,9 +36,25 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:text="Type or speak in English or Filipino. The matching signs play below for a Deaf person to read."
-                    android:textAppearance="?attr/textAppearanceBodyMedium"
+                    android:text="Type or speak a word. Its sign plays below."
+                    android:textAppearance="?attr/textAppearanceBodyLarge"
                     android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <!-- Scope notice (expert review): this is a dictionary lookup, not FSL translation. -->
+                <TextView
+                    android:id="@+id/scopeNotice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_info_neutral"
+                    android:drawablePadding="8dp"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="8dp"
+                    android:text="Shows the dictionary sign for each supported word. This is not full FSL sentence translation."
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    app:drawableStartCompat="@drawable/ic_info"
+                    app:drawableTint="?attr/colorPrimary" />
 
                 <com.google.android.material.textfield.TextInputLayout
                     style="@style/Widget.SignTalk.TextInput"
@@ -83,6 +99,20 @@
                         app:icon="@drawable/ic_arrow_forward"
                         app:iconGravity="textEnd" />
                 </LinearLayout>
+
+                <!-- Voice input privacy notice: RecognizerIntent usually uses Google's online service. -->
+                <TextView
+                    android:id="@+id/voiceNotice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:text="Speak uses Google speech recognition: it needs internet, and your voice is sent to Google to turn it into text. Typing stays on your phone."
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    app:drawableStartCompat="@drawable/ic_wifi"
+                    app:drawableTint="?attr/colorOnSurfaceVariant" />
 
                 <!-- Microphone permission request: shown only when Speak is tapped without RECORD_AUDIO granted. -->
                 <LinearLayout
@@ -269,6 +299,53 @@
                         android:textColor="?attr/colorPrimary"
                         android:textSize="28sp" />
 
+                    <!-- Sign label/gloss shown separately from its English and Filipino meanings. -->
+                    <TextView
+                        android:id="@+id/currentSignGloss"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:gravity="center"
+                        android:textAppearance="?attr/textAppearanceLabelLarge"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <TextView
+                        android:id="@+id/currentSignMeanings"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center"
+                        android:textAppearance="?attr/textAppearanceBodyMedium"
+                        android:textColor="?attr/colorOnSurfaceVariant" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/replayButton"
+                            style="@style/Widget.SignTalk.Button.Tonal"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Replay"
+                            app:icon="@drawable/ic_replay" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/slowButton"
+                            style="@style/Widget.SignTalk.Button.Outlined"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:checkable="true"
+                            android:text="Slow (0.5x)"
+                            app:icon="@drawable/ic_slow_motion" />
+                    </LinearLayout>
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -296,15 +373,14 @@
                         android:textColor="?attr/colorOnErrorContainer"
                         android:visibility="gone" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/replayButton"
-                        style="@style/Widget.SignTalk.Button.Text"
-                        android:layout_width="wrap_content"
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/suggestionChips"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="8dp"
-                        android:text="Replay from start"
-                        app:icon="@drawable/ic_replay" />
+                        android:layout_marginTop="6dp"
+                        android:visibility="gone"
+                        app:chipSpacingHorizontal="8dp" />
+
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -320,6 +396,15 @@
             android:textAppearance="?attr/textAppearanceBodyMedium"
             android:textColor="?attr/colorOnErrorContainer"
             android:visibility="gone" />
+
+        <!-- "Did you mean" suggestions when nothing matched at all. -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/noSignsSuggestionChips"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:chipSpacingHorizontal="8dp" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

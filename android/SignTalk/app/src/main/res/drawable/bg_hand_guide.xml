@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Dashed frame over the camera preview showing where to sign (upper body and hands). -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@android:color/transparent" />
+    <stroke
+        android:width="3dp"
+        android:color="@color/hand_guide"
+        android:dashWidth="14dp"
+        android:dashGap="10dp" />
+    <corners android:radius="28dp" />
+</shape>

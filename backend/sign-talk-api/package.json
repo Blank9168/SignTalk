@@ -9,6 +9,8 @@
     "dev": "nodemon src/server.js",
     "seed:dictionary": "node src/scripts/seedDictionary.js",
     "seed:model-version": "node src/scripts/registerModelVersion.js",
+    "backup": "node src/scripts/backup.js",
+    "restore": "node src/scripts/restore.js",
     "test": "jest --runInBand",
     "lint": "node --check src/server.js"
   },

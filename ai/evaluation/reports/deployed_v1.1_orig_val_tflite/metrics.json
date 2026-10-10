@@ -1,0 +1,27 @@
+{
+  "n": 175,
+  "accuracy": 0.9657142857142857,
+  "macro_precision": 0.95,
+  "macro_recall": 0.94,
+  "macro_f1": 0.935878787878788,
+  "weighted_precision": 0.962857142857143,
+  "weighted_recall": 0.9657142857142857,
+  "weighted_f1": 0.9586839826839826,
+  "top3_accuracy": 0.9828571428571429,
+  "mean_confidence": 0.8760274648666382,
+  "classes_in_test_set": 50,
+  "classes_in_model": 50,
+  "accuracy_first_12_frames": 0.8514285714285714,
+  "run_name": "deployed_v1.1_orig_val_tflite",
+  "model": "android/SignTalk/app/src/main/assets/sign_lstm_iso.tflite",
+  "model_kind": "tflite",
+  "test_set": "train.py validation split of the original 889 clips (seed 42, 20% per class) - the held-out split of the deployed model",
+  "caveats": [
+    "Random per-clip split: the same signers (FSL-105 signer(s), the team phone signer) appear in both train and test, so this is NOT a signer-independent result."
+  ],
+  "tflite_parity": {
+    "model": "android/SignTalk/app/src/main/assets/sign_lstm_iso.tflite",
+    "argmax_agreement": 1.0,
+    "max_abs_prob_diff": 3.5762786865234375e-07
+  }
+}

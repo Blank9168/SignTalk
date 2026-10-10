@@ -2,3 +2,7 @@ mediapipe==0.10.14
 opencv-python
 torch
 numpy
+scikit-learn
+matplotlib
+# optional, only to evaluate the .tflite file directly:
+# ai-edge-litert

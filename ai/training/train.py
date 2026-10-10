@@ -38,6 +38,23 @@ meaningful; this script reports overall accuracy, macro/weighted P/R/F1,
 the full classification_report.txt (per-class, with zero_division=0 so any
 still-thin classes just show lower support instead of erroring), a short
 list of the most confused class pairs, and the raw confusion matrix as CSV.
+
+Command line (2026-10-10; with no arguments it behaves exactly as before and
+writes into ai/models/):
+  python ai/training/train.py                      # 50 classes -> ai/models/
+  python ai/training/train.py --include-none       # 51 classes (+ `none`) -> ai/models/candidate/none_class/
+  python ai/training/train.py --include-none --epochs 2 --out-dir <tmp>   # smoke test
+Options: --data-dir, --none-dir, --out-dir, --epochs, --patience, --seed, --split {all,orig}.
+Every run also writes split_manifest.csv (which clip went to train / val) next
+to the model so ai/evaluation/evaluate_model.py can evaluate on exactly that
+validation split.
+
+Opt-in `none` class (--include-none): sequences from ai/dataset/none/ (any
+*.npy directly in it or one folder down, e.g. none/synthetic/ from
+make_none_from_existing.py and none/recorded/ for real non-sign clips) become
+class "none", appended LAST so the 50 existing label indices do not change.
+A labels.json in the Android app format (with "none" appended) is written to
+the output folder; the app must also be taught to treat "none" as "no sign".
 """
 
 import os
@@ -45,6 +62,7 @@ import sys
 import json
 import csv
 import glob
+import argparse
 
 import numpy as np
 import torch
@@ -55,11 +73,13 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, classification_report, precision_recall_fscore_support
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))  # training/ first (also under python -I)
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "dataset"))
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "models"))
 
 from dataset import SignDataset  # local (training/dataset.py), sys.path appended, not shadowed
 from model import SignLSTM
+import splits  # training/splits.py: torch-free copy of the split logic, shared with ai/evaluation
 
 # raw_iso/ = raw/ converted to aspect-corrected features by dataset/fix_aspect.py
 # (see normalize_hand in dataset/landmarks.py). Falls back to raw/ only if it has
@@ -72,6 +92,9 @@ if not os.path.isdir(RAW_DIR):
     RAW_DIR = os.path.join(_DATASET_DIR, "raw")
 MODELS_DIR = os.path.join(os.path.dirname(__file__), "..", "models")
 LABELS_PATH = os.path.join(os.path.dirname(__file__), "..", "dataset", "labels_50.json")
+NONE_DIR = os.path.join(_DATASET_DIR, "none")
+APP_LABELS_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "android", "SignTalk", "app",
+                               "src", "main", "assets", "labels.json")
 
 BATCH_SIZE = 32
 MAX_EPOCHS = 80
@@ -103,53 +126,60 @@ def drop_bad_clips(samples):
     """Remove clips that would poison training: (a) byte-identical clips filed under
     different labels (FSL-105 has four/6 == seven/7 and four/8 == seven/9, which is
     why apat<->pito was the top confusion) and (b) clips with no detected hand at all
-    (walo/7 is an all-zero sequence labelled 'walo')."""
-    import hashlib
-    by_hash = {}
-    for path, label in samples:
-        with open(path, "rb") as f:
-            by_hash.setdefault(hashlib.md5(f.read()).hexdigest(), []).append((path, label))
-    bad = set()
-    for group in by_hash.values():
-        if len({label for _, label in group}) > 1:
-            bad.update(p for p, _ in group)
-    kept, dropped = [], 0
-    for path, label in samples:
-        if path in bad or not np.any(np.load(path)):
-            dropped += 1
-            continue
-        kept.append((path, label))
-    print(f"dropped {dropped} conflicting/empty clips")
-    return kept
+    (walo/7 is an all-zero sequence labelled 'walo'). Implementation: splits.py."""
+    return splits.drop_bad_clips(samples)
 
 
-def build_datasets():
-    full_clean = SignDataset(RAW_DIR, LABEL_ORDER, augment=False)
+def build_datasets(raw_dir=None, label_order=None, none_dir=None, split_mode="all", seed=SEED):
+    raw_dir = raw_dir or RAW_DIR
+    label_order = label_order or LABEL_ORDER
+    full_clean = SignDataset(raw_dir, label_order, augment=False, none_dir=none_dir)
+    if split_mode == "orig":  # the deployed model's original 889-clip pool (no Drive clips)
+        full_clean.base_samples = [s for s in full_clean.base_samples if not splits.is_drive_clip(s[0])]
     full_clean.base_samples = drop_bad_clips(full_clean.base_samples)
 
     # Stratified split: with only ~18-22 samples per class, a plain random
     # split can leave some classes with zero val examples. Split per class
     # instead so every class is represented in both splits.
-    rng = np.random.default_rng(SEED)
-    by_class = {}
-    for i, (_, label_idx) in enumerate(full_clean.base_samples):
-        by_class.setdefault(label_idx, []).append(i)
+    train_indices, val_indices = splits.stratified_split(full_clean.base_samples, VAL_FRACTION, seed)
 
-    train_indices, val_indices = [], []
-    for label_idx, indices in by_class.items():
-        indices = list(indices)
-        rng.shuffle(indices)
-        n_val = max(1, round(len(indices) * VAL_FRACTION))
-        val_indices.extend(indices[:n_val])
-        train_indices.extend(indices[n_val:])
-
-    train_ds = SignDataset(RAW_DIR, LABEL_ORDER, augment=True, augment_multiplier=AUGMENT_MULTIPLIER)
+    train_ds = SignDataset(raw_dir, label_order, augment=True, augment_multiplier=AUGMENT_MULTIPLIER,
+                           none_dir=none_dir)
     train_ds.base_samples = [full_clean.base_samples[i] for i in train_indices]
 
-    val_ds = SignDataset(RAW_DIR, LABEL_ORDER, augment=False)
+    val_ds = SignDataset(raw_dir, label_order, augment=False, none_dir=none_dir)
     val_ds.base_samples = [full_clean.base_samples[i] for i in val_indices]
 
     return train_ds, val_ds
+
+
+def write_split_manifest(path, train_ds, val_ds, label_order):
+    ai_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    with open(path, "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["path", "label", "split"])
+        for name, ds in (("train", train_ds), ("val", val_ds)):
+            for p, l in ds.base_samples:
+                rel = os.path.relpath(os.path.abspath(p), ai_dir).replace(os.sep, "/")
+                w.writerow([rel, label_order[l], name])
+
+
+def write_app_labels(path, label_order):
+    """labels.json in the Android app format with `none` appended at the end."""
+    entries = []
+    if os.path.exists(APP_LABELS_PATH):
+        with open(APP_LABELS_PATH, encoding="utf-8") as f:
+            app = json.load(f)
+        entries = [e for e in app.get("labels", []) if e.get("label") != "none"]
+    if [e.get("label") for e in entries] != [l for l in label_order if l != "none"]:
+        entries = [{"label": l, "displayName": l.replace("_", " ").title()} for l in label_order if l != "none"]
+    if "none" in label_order:
+        entries.append({"label": "none", "displayName": "Not a sign"})
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump({"_comment": "Generated by ai/training/train.py --include-none. Index = model output index; "
+                               "'none' is appended last so the 50 sign indices are unchanged. The app must "
+                               "treat 'none' as 'no sign' (never display/speak it).",
+                   "labels": entries}, f, indent=2, ensure_ascii=False)
 
 
 def run_epoch(model, loader, criterion, optimizer, device, train):
@@ -181,16 +211,55 @@ def top_confused_pairs(cm, label_order, top_n):
     return pairs[:top_n]
 
 
-def main():
-    set_seed(SEED)
+def parse_args(argv=None):
+    ap = argparse.ArgumentParser(description="Train SignLSTM (see module docstring).")
+    ap.add_argument("--data-dir", default=RAW_DIR)
+    ap.add_argument("--include-none", action="store_true",
+                    help="add the opt-in 'none' (not-a-sign) class from --none-dir as the LAST class")
+    ap.add_argument("--none-dir", default=NONE_DIR)
+    ap.add_argument("--out-dir", default=None,
+                    help="default: ai/models (or ai/models/candidate/none_class with --include-none)")
+    ap.add_argument("--epochs", type=int, default=MAX_EPOCHS)
+    ap.add_argument("--patience", type=int, default=PATIENCE)
+    ap.add_argument("--seed", type=int, default=SEED)
+    ap.add_argument("--split", choices=["all", "orig"], default="all",
+                    help="all = every clip in data-dir (default, as before); orig = exclude drive_* clips")
+    return ap.parse_args(argv)
+
+
+def main(argv=None):
+    global RAW_DIR, MODELS_DIR, LABEL_ORDER, MAX_EPOCHS, PATIENCE
+    args = parse_args(argv)
+    RAW_DIR = args.data_dir
+    MAX_EPOCHS, PATIENCE = args.epochs, args.patience
+    none_dir = None
+    if args.include_none:
+        LABEL_ORDER = splits.load_label_order(LABELS_PATH, include_none=True)
+        none_dir = args.none_dir
+        n_none = len(splits.list_samples(RAW_DIR, ["none"], none_dir=none_dir))
+        if n_none == 0:
+            sys.exit(f"--include-none: no .npy files in {none_dir} (run make_none_from_existing.py "
+                     "or add recorded non-sign clips)")
+        n_syn = len(glob.glob(os.path.join(none_dir, "**", "synthetic_*.npy"), recursive=True))
+        print(f"'none' class: {n_none} sequences from {none_dir}"
+              + (f" ({n_syn} SYNTHETIC stopgap)" if n_syn else ""))
+    MODELS_DIR = args.out_dir or (os.path.join(MODELS_DIR, "candidate", "none_class") if args.include_none
+                                  else MODELS_DIR)
+    print(f"output folder: {os.path.abspath(MODELS_DIR)}")
+
+    set_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     os.makedirs(MODELS_DIR, exist_ok=True)
 
-    n_with_data = sum(1 for lbl in LABEL_ORDER if glob.glob(os.path.join(RAW_DIR, lbl, "*.npy")))
+    n_with_data = sum(1 for lbl in LABEL_ORDER if glob.glob(os.path.join(RAW_DIR, lbl, "*.npy"))
+                      or (lbl == "none" and none_dir is not None))
     print(f"Training on {len(LABEL_ORDER)} classes ({n_with_data} have real data, "
           f"{len(LABEL_ORDER) - n_with_data} have none yet and will never be predicted)")
 
-    train_ds, val_ds = build_datasets()
+    train_ds, val_ds = build_datasets(RAW_DIR, LABEL_ORDER, none_dir, args.split, args.seed)
+    write_split_manifest(os.path.join(MODELS_DIR, "split_manifest.csv"), train_ds, val_ds, LABEL_ORDER)
+    if args.include_none:
+        write_app_labels(os.path.join(MODELS_DIR, "labels.json"), LABEL_ORDER)
     print(f"train samples (pre-augment base): {len(train_ds.base_samples)}, "
           f"effective with augmentation: {len(train_ds)}")
     print(f"val samples: {len(val_ds)}")
@@ -325,7 +394,17 @@ def main():
         "macro_f1": macro_f1,
         "best_val_loss": best_val_loss,
         "epochs_trained": len(history),
+        "include_none": bool(args.include_none),
+        "split": args.split,
+        "seed": args.seed,
     }
+    if args.include_none:
+        metadata["none_class"] = {
+            "index": LABEL_ORDER.index("none"),
+            "source_dir": os.path.abspath(none_dir),
+            "samples": sum(1 for _, l in train_ds.base_samples + val_ds.base_samples if LABEL_ORDER[l] == "none"),
+            "synthetic_files": len(glob.glob(os.path.join(none_dir, "**", "synthetic_*.npy"), recursive=True)),
+        }
     with open(os.path.join(MODELS_DIR, "metadata.json"), "w") as f:
         json.dump(metadata, f, indent=2)
 

@@ -19,3 +19,14 @@ describe("unknown route", () => {
     expect(res.body.error).toMatch(/Route not found/);
   });
 });
+
+describe("malformed JSON body", () => {
+  it("returns 400, not 500", async () => {
+    const app = createApp();
+    const res = await request(app)
+      .post("/api/submissions")
+      .set("Content-Type", "application/json")
+      .send('{"name": "Isa",');
+    expect(res.status).toBe(400);
+  });
+});

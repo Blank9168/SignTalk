@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.signtalk.R
 import com.example.signtalk.databinding.FragmentHomeBinding
+import com.example.signtalk.ui.dictionary.AddDictionaryEntryDialogFragment
 import java.util.Calendar
 
 class HomeFragment : Fragment() {
@@ -43,8 +44,14 @@ class HomeFragment : Fragment() {
         binding.dictionaryCard.setOnClickListener {
             findNavController().navigate(R.id.action_home_to_dictionary)
         }
+        binding.addSignCard.setOnClickListener {
+            AddDictionaryEntryDialogFragment().show(childFragmentManager, "add_dictionary_entry")
+        }
         binding.settingsButton.setOnClickListener {
             findNavController().navigate(R.id.action_home_to_settings)
+        }
+        binding.tutorialButton.setOnClickListener {
+            findNavController().navigate(R.id.action_home_to_onboarding)
         }
 
         if (!hasAnimatedIn && savedInstanceState == null) {
@@ -68,7 +75,8 @@ class HomeFragment : Fragment() {
             binding.heroCard,
             binding.recognitionCard,
             binding.translateCard,
-            binding.dictionaryCard
+            binding.dictionaryCard,
+            binding.addSignCard
         )
         views.forEachIndexed { index, v ->
             v.alpha = 0f

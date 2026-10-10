@@ -27,7 +27,13 @@ LANDMARKS_PER_HAND = 21
 COORDS_PER_LANDMARK = 3
 
 
-def _load_labels(raw_dir, label_order):
+def _load_labels(raw_dir, label_order, none_dir=None):
+    """[(path, label_idx)]. The opt-in `none` class (train.py --include-none) is
+    read from none_dir (recursively one level: none/*.npy, none/synthetic/*.npy,
+    none/recorded/*.npy) instead of raw_dir/none. See splits.list_samples."""
+    if none_dir is not None and "none" in label_order:
+        from splits import list_samples  # training/splits.py
+        return list_samples(raw_dir, label_order, none_dir=none_dir)
     samples = []
     for idx, label in enumerate(label_order):
         for path in sorted(glob.glob(os.path.join(raw_dir, label, "*.npy"))):
@@ -119,11 +125,11 @@ def _aniso(seq):
 
 
 class SignDataset(Dataset):
-    def __init__(self, raw_dir, label_order, augment=False, augment_multiplier=1):
+    def __init__(self, raw_dir, label_order, augment=False, augment_multiplier=1, none_dir=None):
         self.raw_dir = raw_dir
         self.label_order = label_order
         self.augment = augment
-        self.base_samples = _load_labels(raw_dir, label_order)
+        self.base_samples = _load_labels(raw_dir, label_order, none_dir=none_dir)
         self.multiplier = augment_multiplier if augment else 1
 
     def __len__(self):
