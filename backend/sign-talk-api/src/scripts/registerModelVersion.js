@@ -24,7 +24,10 @@ async function main() {
   const trainedAt = fs.statSync(metadataPath).mtime;
   // A version string unique per training run: timestamp + accuracy, so two
   // runs on the same day with different results don't collide.
-  const version = `${trainedAt.toISOString()}_acc${(metadata.overall_val_accuracy ?? 0).toFixed(4)}`;
+  // metadata.version (e.g. "1.1") wins when set; otherwise fall back to timestamp + accuracy.
+  const version = metadata.version
+    ? String(metadata.version)
+    : `${trainedAt.toISOString()}_acc${(metadata.overall_val_accuracy ?? 0).toFixed(4)}`;
 
   await connectDB();
 

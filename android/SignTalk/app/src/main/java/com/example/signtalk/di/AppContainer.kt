@@ -69,6 +69,8 @@ class AppContainer(context: Context) {
             val model = RetrofitClient.apiService.getActiveModelVersion()
             val accuracyText = model.overallValAccuracy?.let { "%.1f%%".format(it * 100) }
             val info = buildString {
+                // Short versions like "1.1" are shown; old timestamp-style ids are not.
+                if (model.version.isNotBlank() && model.version.length <= 8) append("Model v${model.version} • ")
                 append("${model.numClasses} classes")
                 if (accuracyText != null) append(" • $accuracyText accuracy")
             }
