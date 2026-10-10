@@ -3,9 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="?android:attr/colorBackground"
+    android:orientation="vertical">
 
     <!-- Camera permission request (shown instead of everything else until granted). -->
     <LinearLayout
@@ -15,33 +14,78 @@
         android:layout_weight="1"
         android:gravity="center"
         android:orientation="vertical"
+        android:padding="32dp"
         android:visibility="gone">
+
+        <FrameLayout
+            android:layout_width="112dp"
+            android:layout_height="112dp"
+            android:background="@drawable/bg_circle_primary_container">
+
+            <ImageView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_videocam"
+                app:tint="?attr/colorOnPrimaryContainer" />
+        </FrameLayout>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:gravity="center"
-            android:text="SignTalk needs camera access to recognize signs."
-            android:textAppearance="?attr/textAppearanceBodyLarge" />
+            android:text="Allow camera access"
+            android:textAppearance="@style/TextAppearance.SignTalk.Display"
+            android:textSize="24sp" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp"
             android:gravity="center"
-            android:text="Your camera feed is processed entirely on-device and is never uploaded."
-            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:text="SignTalk needs your camera to see and recognize your signs."
+            android:textAppearance="?attr/textAppearanceBodyLarge"
             android:textColor="?attr/colorOnSurfaceVariant" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_info_neutral"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_lock"
+                app:tint="?attr/colorPrimary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Processed on your phone. Never uploaded."
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="?attr/colorOnSurfaceVariant" />
+        </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/grantPermissionButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Grant camera access" />
+            android:layout_marginTop="28dp"
+            android:paddingHorizontal="28dp"
+            android:text="Allow camera"
+            app:icon="@drawable/ic_videocam" />
     </LinearLayout>
 
-    <!-- Camera preview + recognition status (shown once permission is granted). -->
+    <!-- Camera preview + recognition output (shown once permission is granted). -->
     <LinearLayout
         android:id="@+id/recognitionGroup"
         android:layout_width="match_parent"
@@ -50,41 +94,126 @@
         android:orientation="vertical"
         android:visibility="gone">
 
-        <!-- Camera takes whatever height is left above the output text. fitCenter shows the whole
-             analysed frame (no cropping), so a hand at the edge of the frame is still visible. -->
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <!-- Camera takes whatever height is left above the output panel. fitCenter shows the whole
+             analysed frame (no cropping), so a hand at the edge of the frame is still visible.
+             implementationMode="compatible" (TextureView) lets the card clip the preview to its
+             rounded corners; the default SurfaceView mode would ignore the clipping. -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginTop="4dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/camera_backdrop"
+            app:cardCornerRadius="28dp">
 
-            <androidx.camera.view.PreviewView
-                android:id="@+id/previewView"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:scaleType="fitCenter"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
+                <androidx.camera.view.PreviewView
+                    android:id="@+id/previewView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:implementationMode="compatible"
+                    app:scaleType="fitCenter" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|start"
+                    android:layout_margin="14dp"
+                    android:background="@drawable/bg_live_pill"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp">
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/bg_live_dot" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="LIVE · On-device"
+                        android:textAppearance="?attr/textAppearanceLabelMedium"
+                        android:textColor="@color/on_brand" />
+                </LinearLayout>
+
+                <!-- Running transcript: each newly recognized sign is appended, so a
+                     sequence of signs reads as a sentence. Hidden while empty. -->
+                <LinearLayout
+                    android:id="@+id/transcriptBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_margin="12dp"
+                    android:background="@drawable/bg_transcript_bar"
+                    android:gravity="center_vertical"
+                    android:minHeight="48dp"
+                    android:orientation="horizontal"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="4dp"
+                    android:visibility="gone">
+
+                    <HorizontalScrollView
+                        android:id="@+id/transcriptScroll"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fadingEdgeLength="24dp"
+                        android:requiresFadingEdge="horizontal"
+                        android:scrollbars="none">
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/transcriptChips"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:chipSpacingHorizontal="6dp"
+                            app:singleLine="true" />
+                    </HorizontalScrollView>
+
+                    <ImageButton
+                        android:id="@+id/speakTranscriptButton"
+                        style="@style/SignTalk.OverlayIconButton"
+                        android:contentDescription="Speak the whole sentence"
+                        android:src="@drawable/ic_volume_up" />
+
+                    <ImageButton
+                        android:id="@+id/clearTranscriptButton"
+                        style="@style/SignTalk.OverlayIconButton"
+                        android:contentDescription="Clear the sentence"
+                        android:src="@drawable/ic_close" />
+                </LinearLayout>
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Output panel. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_margin="12dp"
+            android:background="@drawable/bg_panel"
             android:gravity="center_horizontal"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="24dp">
 
             <TextView
                 android:id="@+id/statusTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="112dp"
+                android:fontFamily="sans-serif-medium"
                 android:gravity="center"
                 android:maxLines="2"
+                android:minHeight="96dp"
                 android:text="Starting recognition..."
                 android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textStyle="bold"
+                android:textColor="?attr/colorOnSurface"
                 app:autoSizeMaxTextSize="24sp"
                 app:autoSizeMinTextSize="18sp"
                 app:autoSizeStepGranularity="2sp"
@@ -102,17 +231,20 @@
 
             <ProgressBar
                 android:id="@+id/statusProgress"
-                style="@android:style/Widget.ProgressBar.Horizontal"
+                style="@android:style/Widget.Material.ProgressBar.Horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_height="6dp"
+                android:layout_marginTop="12dp"
+                android:indeterminateTint="?attr/colorPrimary"
+                android:progressBackgroundTint="?attr/colorSurfaceContainerHighest"
+                android:progressTint="?attr/colorPrimary"
                 android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/confidenceGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="12dp"
                 android:orientation="vertical"
                 android:visibility="gone">
 
@@ -120,15 +252,17 @@
                     android:id="@+id/confidenceLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?attr/textAppearanceLabelLarge" />
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
 
                 <com.google.android.material.progressindicator.LinearProgressIndicator
                     android:id="@+id/confidenceBar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    app:trackCornerRadius="4dp"
-                    app:trackThickness="8dp" />
+                    android:layout_marginTop="8dp"
+                    app:trackColor="?attr/colorSurfaceContainerHighest"
+                    app:trackCornerRadius="5dp"
+                    app:trackThickness="10dp" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

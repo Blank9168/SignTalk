@@ -13,6 +13,8 @@
         <action
             android:id="@+id/action_splash_to_home"
             app:destination="@id/homeFragment"
+            app:enterAnim="@anim/tab_enter"
+            app:exitAnim="@anim/tab_exit"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
     </fragment>
@@ -24,16 +26,32 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_home_to_recognition"
-            app:destination="@id/recognitionFragment" />
+            app:destination="@id/recognitionFragment"
+            app:enterAnim="@anim/nav_enter"
+            app:exitAnim="@anim/nav_exit"
+            app:popEnterAnim="@anim/nav_pop_enter"
+            app:popExitAnim="@anim/nav_pop_exit" />
         <action
             android:id="@+id/action_home_to_translate"
-            app:destination="@id/translateFragment" />
+            app:destination="@id/translateFragment"
+            app:enterAnim="@anim/nav_enter"
+            app:exitAnim="@anim/nav_exit"
+            app:popEnterAnim="@anim/nav_pop_enter"
+            app:popExitAnim="@anim/nav_pop_exit" />
         <action
             android:id="@+id/action_home_to_dictionary"
-            app:destination="@id/dictionaryListFragment" />
+            app:destination="@id/dictionaryListFragment"
+            app:enterAnim="@anim/nav_enter"
+            app:exitAnim="@anim/nav_exit"
+            app:popEnterAnim="@anim/nav_pop_enter"
+            app:popExitAnim="@anim/nav_pop_exit" />
         <action
             android:id="@+id/action_home_to_settings"
-            app:destination="@id/settingsFragment" />
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/nav_enter"
+            app:exitAnim="@anim/nav_exit"
+            app:popEnterAnim="@anim/nav_pop_enter"
+            app:popExitAnim="@anim/nav_pop_exit" />
     </fragment>
 
     <fragment
@@ -55,13 +73,17 @@
         tools:layout="@layout/fragment_dictionary_list">
         <action
             android:id="@+id/action_dictionaryList_to_detail"
-            app:destination="@id/dictionaryDetailFragment" />
+            app:destination="@id/dictionaryDetailFragment"
+            app:enterAnim="@anim/nav_enter"
+            app:exitAnim="@anim/nav_exit"
+            app:popEnterAnim="@anim/nav_pop_enter"
+            app:popExitAnim="@anim/nav_pop_exit" />
     </fragment>
 
     <fragment
         android:id="@+id/dictionaryDetailFragment"
         android:name="com.example.signtalk.ui.dictionary.DictionaryDetailFragment"
-        android:label="Sign"
+        android:label="Sign details"
         tools:layout="@layout/fragment_dictionary_detail">
         <argument
             android:name="entryId"

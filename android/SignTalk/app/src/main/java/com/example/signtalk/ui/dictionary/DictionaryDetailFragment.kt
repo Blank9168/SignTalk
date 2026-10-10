@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.signtalk.SignTalkApp
 import com.example.signtalk.databinding.FragmentDictionaryDetailBinding
 import com.example.signtalk.domain.model.DictionaryEntry
+import com.example.signtalk.ui.common.fitVideo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -129,12 +130,14 @@ class DictionaryDetailFragment : Fragment() {
                 binding.loadingText.text = "Sign not found."
                 return@launch
             }
-            (requireActivity() as? AppCompatActivity)?.supportActionBar?.title = entry.displayName
+            // The name is shown large in the screen header, so the toolbar keeps its generic label.
 
             binding.loadingText.visibility = View.GONE
             binding.contentGroup.visibility = View.VISIBLE
             binding.entryEmoji.text = entry.emoji
+            binding.entryName.text = entry.displayName
             binding.entryCategory.text = entry.category
+            binding.entryCategory.visibility = if (entry.category.isBlank()) View.GONE else View.VISIBLE
             binding.entryDescription.text = entry.description
             bindVideo(entry)
 
@@ -245,7 +248,10 @@ class DictionaryDetailFragment : Fragment() {
                 // times as needed to learn the movement. It just plays on repeat,
                 // no controls, nothing to tap.
                 isLooping = true
-                setOnPreparedListener { mp -> mp.start() }
+                setOnPreparedListener { mp ->
+                    _binding?.entryVideoView?.fitVideo(mp.videoWidth, mp.videoHeight)
+                    mp.start()
+                }
                 setOnErrorListener { _, what, extra ->
                     Log.e("DictionaryDetail", "Video playback error: what=$what extra=$extra uri=$uri")
                     true // consume -- don't let the framework pop its own dialog

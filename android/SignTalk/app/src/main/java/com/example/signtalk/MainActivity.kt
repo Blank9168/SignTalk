@@ -1,11 +1,17 @@
 package com.example.signtalk
 
+import android.content.res.Configuration
 import android.os.Bundle
-import android.view.View
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
+import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
@@ -23,16 +29,30 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
+    private lateinit var navController: NavController
+
+    /** The four screens reachable from the bottom navigation bar. */
+    private val tabDestinations = setOf(
+        R.id.homeFragment,
+        R.id.recognitionFragment,
+        R.id.translateFragment,
+        R.id.dictionaryListFragment
+    )
+
+    private var systemBarInsets: Insets = Insets.NONE
+    private var imeBottomInset: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Draw behind the status and navigation bars on every Android version
+        // (Android 15 forces this anyway), and pad content by the bar insets below.
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        // targetSdk 35 (Android 15) enforces edge-to-edge by default, so the
-        // status bar would otherwise draw over the toolbar -- pad it by the
-        // top system-bar inset instead of opting back out of edge-to-edge.
+        // The status bar draws over the toolbar in edge-to-edge mode, so pad
+        // the toolbar by the top system-bar inset.
         ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             view.updatePadding(top = systemBars.top)
@@ -41,24 +61,89 @@ class MainActivity : AppCompatActivity() {
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.navHostFragment) as NavHostFragment
-        val navController = navHostFragment.navController
+        navController = navHostFragment.navController
 
-        // Home is the "top" of the app from the user's point of view -- no back
-        // arrow there, but every screen below it gets one automatically.
-        appBarConfiguration = AppBarConfiguration(setOf(R.id.homeFragment))
+        // The tab screens are top-level (no back arrow); Settings and sign
+        // details get one automatically.
+        appBarConfiguration = AppBarConfiguration(tabDestinations)
         setupActionBarWithNavController(navController, appBarConfiguration)
+        setUpBottomNav()
+
+        // Keep screen content clear of the navigation bar and the keyboard; on
+        // Home (no toolbar) also clear of the status bar. Splash stays full-bleed.
+        ViewCompat.setOnApplyWindowInsetsListener(binding.navHostFragment) { _, insets ->
+            systemBarInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            imeBottomInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+            applyContentInsets()
+            insets
+        }
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            // Home draws its own "SignTalk" header (title, tagline, settings),
-            // so the shared toolbar would just repeat the app name there.
-            binding.toolbar.visibility =
-                if (destination.id == R.id.splashFragment || destination.id == R.id.homeFragment) View.GONE else View.VISIBLE
+            if (destination.id in tabDestinations) {
+                binding.bottomNav.menu.findItem(destination.id)?.isChecked = true
+            }
+            applyContentInsets()
+            // Splash sits on the dark teal gradient: always use light status-bar icons there.
+            WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars =
+                destination.id != R.id.splashFragment && !isNightMode()
         }
     }
 
+    /**
+     * Tabs always land on a single copy of the screen just above Home, so Back
+     * from any tab returns to Home instead of walking through every tab visited.
+     */
+    private fun setUpBottomNav() {
+        binding.bottomNav.setOnItemSelectedListener { item ->
+            val current = navController.currentDestination?.id
+            if (current == item.itemId) return@setOnItemSelectedListener true
+            if (item.itemId == R.id.homeFragment) {
+                navController.popBackStack(R.id.homeFragment, false)
+            } else {
+                val options = NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .setPopUpTo(R.id.homeFragment, false)
+                    .setEnterAnim(R.anim.tab_enter)
+                    .setExitAnim(R.anim.tab_exit)
+                    .setPopEnterAnim(R.anim.tab_enter)
+                    .setPopExitAnim(R.anim.tab_exit)
+                    .build()
+                navController.navigate(item.itemId, null, options)
+            }
+            true
+        }
+        // Re-tapping the current tab does nothing.
+        binding.bottomNav.setOnItemReselectedListener { }
+    }
+
+    /**
+     * Shows/hides the toolbar and bottom bar for the current screen and keeps
+     * content clear of the system bars and keyboard. Home draws its own header,
+     * so the shared toolbar would just repeat the app name there; Splash is
+     * full-bleed. The bottom bar hides while the keyboard is open.
+     */
+    private fun applyContentInsets() {
+        val destinationId = navController.currentDestination?.id
+        val isSplash = destinationId == R.id.splashFragment
+        val isHome = destinationId == R.id.homeFragment
+        val keyboardOpen = imeBottomInset > 0
+        val showBottomNav = destinationId != null && destinationId in tabDestinations && !keyboardOpen
+
+        binding.toolbar.isVisible = !(isSplash || isHome)
+        binding.bottomNav.isVisible = showBottomNav
+        binding.navHostFragment.updatePadding(
+            top = if (isHome) systemBarInsets.top else 0,
+            bottom = when {
+                isSplash || showBottomNav -> 0 // the bottom bar pads itself for the system bar
+                else -> maxOf(systemBarInsets.bottom, imeBottomInset)
+            }
+        )
+    }
+
+    private fun isNightMode(): Boolean =
+        (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+
     override fun onSupportNavigateUp(): Boolean {
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.navHostFragment) as NavHostFragment
-        return navHostFragment.navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 }

@@ -1,30 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorPrimary"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:background="@drawable/bg_brand_gradient">
 
-    <TextView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingHorizontal="32dp">
+
+        <ImageView
+            android:id="@+id/splashLogo"
+            android:layout_width="112dp"
+            android:layout_height="112dp"
+            android:background="@drawable/bg_badge_on_brand"
+            android:importantForAccessibility="no"
+            android:padding="14dp"
+            android:src="@drawable/img_logo_mark" />
+
+        <TextView
+            android:id="@+id/splashTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="-0.01"
+            android:text="SignTalk"
+            android:textColor="@color/on_brand"
+            android:textSize="34sp" />
+
+        <TextView
+            android:id="@+id/splashTagline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:text="Filipino Sign Language, in both directions"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textColor="@color/on_brand_muted" />
+    </LinearLayout>
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="🤟"
-        android:textSize="64sp" />
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="72dp"
+        android:indeterminate="true"
+        app:indicatorColor="@color/on_brand"
+        app:indicatorSize="28dp"
+        app:trackThickness="3dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="SignTalk"
-        android:textColor="?attr/colorOnPrimary"
-        android:textSize="28sp"
-        android:textStyle="bold" />
-
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:indeterminateTint="?attr/colorOnPrimary" />
-
-</LinearLayout>
+</FrameLayout>

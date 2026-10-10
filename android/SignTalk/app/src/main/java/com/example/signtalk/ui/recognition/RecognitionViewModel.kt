@@ -47,6 +47,16 @@ class RecognitionViewModel(
     // auto-speak setting, so it can't share that gate.
     private var lastLoggedLabel: String? = null
 
+    /**
+     * Running transcript: every newly recognized sign is appended, so a
+     * sequence of signs builds up a sentence on screen. Same "new sign" rule as
+     * speaking/logging (holding a sign doesn't repeat it; lowering the hands
+     * and signing it again does).
+     */
+    private val _transcript = MutableStateFlow<List<String>>(emptyList())
+    val transcript: StateFlow<List<String>> = _transcript.asStateFlow()
+    private var lastTranscriptLabel: String? = null
+
     init {
         viewModelScope.launch {
             settings.collect { s ->
@@ -60,11 +70,13 @@ class RecognitionViewModel(
                 if (state is RecognitionState.Recognized) {
                     maybeSpeak(state.result.displayName, state.result.label)
                     maybeLogRecognition(state.result)
+                    appendToTranscript(state.result)
                 } else if (state is RecognitionState.WaitingForHands) {
                     // Hands left the frame: signing the same word again is a new sign.
                     // (Previously it was silently ignored until the screen was reset.)
                     lastSpokenLabel = null
                     lastLoggedLabel = null
+                    lastTranscriptLabel = null
                 }
             }
         }
@@ -108,6 +120,23 @@ class RecognitionViewModel(
         }
     }
 
+    private fun appendToTranscript(result: RecognitionResult) {
+        if (lastTranscriptLabel == result.label) return
+        lastTranscriptLabel = result.label
+        _transcript.value = (_transcript.value + result.displayName).takeLast(MAX_TRANSCRIPT_WORDS)
+    }
+
+    fun clearTranscript() {
+        _transcript.value = emptyList()
+        lastTranscriptLabel = null
+    }
+
+    /** Reads the whole transcript aloud as one sentence. */
+    fun speakTranscript() {
+        val sentence = _transcript.value.joinToString(" ")
+        if (sentence.isNotBlank()) speechOutput.speak(sentence)
+    }
+
     fun onFrame(bitmapProvider: () -> android.graphics.Bitmap, timestampMs: Long) {
         engine.processFrame(bitmapProvider, timestampMs)
     }
@@ -116,6 +145,10 @@ class RecognitionViewModel(
         engine.reset()
         lastSpokenLabel = null
         lastLoggedLabel = null
+    }
+
+    private companion object {
+        const val MAX_TRANSCRIPT_WORDS = 20
     }
 
     override fun onCleared() {

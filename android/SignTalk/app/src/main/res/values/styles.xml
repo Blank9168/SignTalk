@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Shared component defaults for light and dark (colors live in themes.xml). -->
+    <style name="Theme.SignTalk.Components" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowBackground">?android:attr/colorBackground</item>
+
+        <item name="materialCardViewStyle">@style/Widget.SignTalk.Card</item>
+        <item name="toolbarStyle">@style/Widget.SignTalk.Toolbar</item>
+        <item name="textInputStyle">@style/Widget.SignTalk.TextInput</item>
+        <item name="materialButtonStyle">@style/Widget.SignTalk.Button</item>
+
+        <item name="shapeAppearanceCornerSmall">@style/ShapeAppearance.SignTalk.Small</item>
+        <item name="shapeAppearanceCornerMedium">@style/ShapeAppearance.SignTalk.Medium</item>
+        <item name="shapeAppearanceCornerLarge">@style/ShapeAppearance.SignTalk.Large</item>
+        <item name="shapeAppearanceCornerExtraLarge">@style/ShapeAppearance.SignTalk.ExtraLarge</item>
+    </style>
+
+    <!-- Shapes: a little rounder than Material defaults for a friendlier feel. -->
+    <style name="ShapeAppearance.SignTalk.Small" parent="ShapeAppearance.Material3.Corner.Small">
+        <item name="cornerSize">10dp</item>
+    </style>
+    <style name="ShapeAppearance.SignTalk.Medium" parent="ShapeAppearance.Material3.Corner.Medium">
+        <item name="cornerSize">16dp</item>
+    </style>
+    <style name="ShapeAppearance.SignTalk.Large" parent="ShapeAppearance.Material3.Corner.Large">
+        <item name="cornerSize">20dp</item>
+    </style>
+    <style name="ShapeAppearance.SignTalk.ExtraLarge" parent="ShapeAppearance.Material3.Corner.ExtraLarge">
+        <item name="cornerSize">28dp</item>
+    </style>
+    <style name="ShapeAppearance.SignTalk.Pill" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Cards: flat, tonal, rounded. Override cardBackgroundColor per use. -->
+    <style name="Widget.SignTalk.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainerLow</item>
+    </style>
+
+    <style name="Widget.SignTalk.Card.Outlined" parent="Widget.Material3.CardView.Outlined">
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainerLowest</item>
+        <item name="strokeColor">?attr/colorOutlineVariant</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <style name="Widget.SignTalk.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="titleTextAppearance">@style/TextAppearance.SignTalk.ToolbarTitle</item>
+        <item name="navigationIconTint">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="Widget.SignTalk.TextInput" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">16dp</item>
+        <item name="boxCornerRadiusTopEnd">16dp</item>
+        <item name="boxCornerRadiusBottomStart">16dp</item>
+        <item name="boxCornerRadiusBottomEnd">16dp</item>
+        <item name="boxStrokeColor">?attr/colorPrimary</item>
+        <item name="boxBackgroundColor">?attr/colorSurfaceContainerLowest</item>
+        <item name="boxBackgroundMode">outline</item>
+        <item name="startIconTint">?attr/colorOnSurfaceVariant</item>
+        <item name="endIconTint">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Pill search field: filled, no stroke, used on the dictionary screen. -->
+    <style name="Widget.SignTalk.TextInput.Search" parent="Widget.Material3.TextInputLayout.FilledBox">
+        <item name="boxCornerRadiusTopStart">28dp</item>
+        <item name="boxCornerRadiusTopEnd">28dp</item>
+        <item name="boxCornerRadiusBottomStart">28dp</item>
+        <item name="boxCornerRadiusBottomEnd">28dp</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
+        <item name="boxBackgroundColor">?attr/colorSurfaceContainerHigh</item>
+        <item name="hintEnabled">false</item>
+        <item name="startIconTint">?attr/colorOnSurfaceVariant</item>
+        <item name="endIconTint">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <!-- Buttons: taller touch targets (52dp) for one-handed use. -->
+    <style name="Widget.SignTalk.Button" parent="Widget.Material3.Button">
+        <item name="android:minHeight">52dp</item>
+        <item name="iconPadding">8dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.SignTalk.Button</item>
+    </style>
+    <style name="Widget.SignTalk.Button.Tonal" parent="Widget.Material3.Button.TonalButton">
+        <item name="android:minHeight">52dp</item>
+        <item name="iconPadding">8dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.SignTalk.Button</item>
+    </style>
+    <style name="Widget.SignTalk.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">52dp</item>
+        <item name="iconPadding">8dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.SignTalk.Button</item>
+    </style>
+    <style name="Widget.SignTalk.Button.Text" parent="Widget.Material3.Button.TextButton">
+        <item name="iconPadding">8dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.SignTalk.Button</item>
+    </style>
+    <style name="Widget.SignTalk.Button.Danger" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">52dp</item>
+        <item name="iconPadding">8dp</item>
+        <item name="android:textColor">?attr/colorError</item>
+        <item name="iconTint">?attr/colorError</item>
+        <item name="strokeColor">?attr/colorError</item>
+        <item name="android:textAppearance">@style/TextAppearance.SignTalk.Button</item>
+    </style>
+
+    <!-- Typography helpers. -->
+    <style name="TextAppearance.SignTalk.ToolbarTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.SignTalk.Button" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textSize">15sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="TextAppearance.SignTalk.Display" parent="TextAppearance.Material3.HeadlineMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+    <style name="TextAppearance.SignTalk.CardTitle" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+    <!-- Small all-caps label above a group of content ("GET STARTED", "ABOUT"). -->
+    <style name="TextAppearance.SignTalk.Overline" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
+    <!-- Reusable view styles. -->
+    <style name="SignTalk" />
+
+    <style name="SignTalk.IconBadge">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <style name="SignTalk.SettingsRow">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">64dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+    </style>
+
+    <style name="SignTalk.SettingsIcon">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:importantForAccessibility">no</item>
+        <item name="tint">?attr/colorPrimary</item>
+    </style>
+</resources>

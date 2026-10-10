@@ -24,6 +24,7 @@ mediapipeTasksVision = "1.0.0"
 tensorflowLite = "1.4.2"
 retrofit = "2.11.0"
 okhttpLoggingInterceptor = "4.12.0"
+emoji2 = "1.4.0"
 
 
 [libraries]
@@ -37,6 +38,7 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
 # --- added for the SignTalk XML-Views app ---
+androidx-emoji2-bundled = { group = "androidx.emoji2", name = "emoji2-bundled", version.ref = "emoji2" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
 androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }

@@ -2,10 +2,13 @@ package com.example.signtalk.ui.recognition
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
+import android.widget.HorizontalScrollView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -19,6 +22,7 @@ import com.example.signtalk.SignTalkApp
 import com.example.signtalk.camera.CameraController
 import com.example.signtalk.databinding.FragmentRecognitionBinding
 import com.example.signtalk.domain.model.RecognitionState
+import com.google.android.material.chip.Chip
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -38,6 +42,9 @@ class RecognitionFragment : Fragment() {
     }
 
     private lateinit var cameraController: CameraController
+
+    /** Last recognized word shown, so the pop animation runs only when it changes. */
+    private var lastShownWord: String? = null
 
     private val requestCameraPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -59,6 +66,8 @@ class RecognitionFragment : Fragment() {
         binding.grantPermissionButton.setOnClickListener {
             requestCameraPermission.launch(Manifest.permission.CAMERA)
         }
+        binding.clearTranscriptButton.setOnClickListener { viewModel.clearTranscript() }
+        binding.speakTranscriptButton.setOnClickListener { viewModel.speakTranscript() }
 
         val hasPermission = ContextCompat.checkSelfPermission(
             requireContext(), Manifest.permission.CAMERA
@@ -82,6 +91,12 @@ class RecognitionFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.recognitionState.collect { state -> renderState(state) }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.transcript.collect { words -> renderTranscript(words) }
             }
         }
     }
@@ -120,6 +135,7 @@ class RecognitionFragment : Fragment() {
                 binding.statusSubtitle.visibility = View.VISIBLE
             }
             is RecognitionState.WaitingForHands -> {
+                lastShownWord = null // the same sign signed again should pop again
                 binding.statusTitle.text = "Show a hand sign to the camera"
             }
             is RecognitionState.WaitingForBody -> {
@@ -140,12 +156,50 @@ class RecognitionFragment : Fragment() {
             is RecognitionState.Recognized -> {
                 binding.statusTitle.text = state.result.displayName
                 binding.statusTitle.setTextColor(primaryColor())
+                if (lastShownWord != state.result.displayName) {
+                    lastShownWord = state.result.displayName
+                    popIn(binding.statusTitle)
+                }
                 val percent = (state.result.confidence * 100).toInt()
                 binding.confidenceLabel.text = "Confidence: $percent%"
                 binding.confidenceBar.setIndicatorColor(confidenceColor(state.result.confidence))
                 binding.confidenceBar.progress = percent
                 binding.confidenceGroup.visibility = View.VISIBLE
             }
+        }
+    }
+
+    /** Newly recognized word scales up into place so the change is noticeable at a glance. */
+    private fun popIn(view: View) {
+        view.animate().cancel()
+        view.scaleX = 0.8f
+        view.scaleY = 0.8f
+        view.alpha = 0.4f
+        view.animate().scaleX(1f).scaleY(1f).alpha(1f)
+            .setDuration(260).setInterpolator(OvershootInterpolator(2f)).start()
+    }
+
+    private fun renderTranscript(words: List<String>) {
+        binding.transcriptBar.visibility = if (words.isEmpty()) View.GONE else View.VISIBLE
+        val group = binding.transcriptChips
+        group.removeAllViews()
+        words.forEachIndexed { index, word ->
+            val isNewest = index == words.lastIndex
+            group.addView(Chip(requireContext()).apply {
+                text = word
+                isClickable = false
+                isCheckable = false
+                isFocusable = false
+                chipStrokeWidth = 0f
+                chipBackgroundColor = ColorStateList.valueOf(
+                    if (isNewest) primaryColor() else TRANSCRIPT_CHIP_COLOR
+                )
+                setTextColor(if (isNewest) onPrimaryColor() else android.graphics.Color.WHITE)
+            })
+        }
+        // Keep the newest word in view.
+        binding.transcriptScroll.post {
+            _binding?.transcriptScroll?.fullScroll(HorizontalScrollView.FOCUS_RIGHT)
         }
     }
 
@@ -158,6 +212,7 @@ class RecognitionFragment : Fragment() {
 
     private fun defaultTextColor(): Int = resolveThemeColor(com.google.android.material.R.attr.colorOnSurface)
     private fun primaryColor(): Int = resolveThemeColor(com.google.android.material.R.attr.colorPrimary)
+    private fun onPrimaryColor(): Int = resolveThemeColor(com.google.android.material.R.attr.colorOnPrimary)
     private fun errorColor(): Int = resolveThemeColor(com.google.android.material.R.attr.colorError)
 
     private fun confidenceColor(confidence: Float): Int = when {
@@ -172,8 +227,14 @@ class RecognitionFragment : Fragment() {
         return typedValue.data
     }
 
+    private companion object {
+        /** Translucent white chips on the dark transcript bar. */
+        const val TRANSCRIPT_CHIP_COLOR = 0x33FFFFFF
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
+        lastShownWord = null
         cameraController.shutdown()
         _binding = null
     }

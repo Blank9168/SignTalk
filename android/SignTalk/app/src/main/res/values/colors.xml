@@ -4,8 +4,8 @@
     <color name="white">#FFFFFFFF</color>
 
     <!-- SignTalk brand palette: a calm teal (accessibility-friendly, evokes
-         "communication") plus a warm amber accent for confidence/attention
-         states. Mirrors the values that used to live in ui/theme/Color.kt. -->
+         "communication") plus a warm amber accent. These match the launcher
+         icon gradient in drawable/ic_launcher_background.xml. -->
     <color name="teal_primary">#FF00796B</color>
     <color name="teal_primary_dark">#FF004D40</color>
     <color name="teal_primary_light">#FF48A999</color>
@@ -15,8 +15,88 @@
     <color name="error_red">#FFC62828</color>
     <color name="warn_amber">#FFF9A825</color>
 
-    <color name="light_background">#FFF7FAF9</color>
+    <color name="light_background">#FFF5FAF8</color>
     <color name="light_surface">#FFFFFFFF</color>
-    <color name="dark_background">#FF0F1513</color>
+    <color name="dark_background">#FF0E1513</color>
     <color name="dark_surface">#FF16201D</color>
+
+    <!-- Brand gradient stops (hero banner, splash). Same in light and dark. -->
+    <color name="brand_gradient_start">#FF2E9A8A</color>
+    <color name="brand_gradient_center">#FF00796B</color>
+    <color name="brand_gradient_end">#FF00433A</color>
+    <color name="on_brand">#FFFFFFFF</color>
+    <color name="on_brand_muted">#CCFFFFFF</color>
+    <color name="brand_glow">#1FFFFFFF</color>
+    <color name="brand_glow_soft">#12FFFFFF</color>
+    <color name="camera_backdrop">#FF0B100F</color>
+    <color name="live_dot">#FFFF5449</color>
+    <color name="scrim_dark">#99000000</color>
+
+    <!-- Material 3 color roles, light scheme (teal seed). -->
+    <color name="md_light_primary">#FF00796B</color>
+    <color name="md_light_onPrimary">#FFFFFFFF</color>
+    <color name="md_light_primaryContainer">#FFB4EFE5</color>
+    <color name="md_light_onPrimaryContainer">#FF00201C</color>
+    <color name="md_light_secondary">#FF4A635F</color>
+    <color name="md_light_onSecondary">#FFFFFFFF</color>
+    <color name="md_light_secondaryContainer">#FFCCE8E2</color>
+    <color name="md_light_onSecondaryContainer">#FF05201C</color>
+    <color name="md_light_tertiary">#FF845400</color>
+    <color name="md_light_onTertiary">#FFFFFFFF</color>
+    <color name="md_light_tertiaryContainer">#FFFFDDB3</color>
+    <color name="md_light_onTertiaryContainer">#FF2A1800</color>
+    <color name="md_light_error">#FFBA1A1A</color>
+    <color name="md_light_onError">#FFFFFFFF</color>
+    <color name="md_light_errorContainer">#FFFFDAD6</color>
+    <color name="md_light_onErrorContainer">#FF410002</color>
+    <color name="md_light_background">#FFF5FAF8</color>
+    <color name="md_light_onBackground">#FF171D1C</color>
+    <color name="md_light_surface">#FFF5FAF8</color>
+    <color name="md_light_onSurface">#FF171D1C</color>
+    <color name="md_light_surfaceVariant">#FFDAE5E1</color>
+    <color name="md_light_onSurfaceVariant">#FF3F4947</color>
+    <color name="md_light_outline">#FF6F7977</color>
+    <color name="md_light_outlineVariant">#FFBEC9C6</color>
+    <color name="md_light_surfaceContainerLowest">#FFFFFFFF</color>
+    <color name="md_light_surfaceContainerLow">#FFEFF5F2</color>
+    <color name="md_light_surfaceContainer">#FFE9EFEC</color>
+    <color name="md_light_surfaceContainerHigh">#FFE3EAE7</color>
+    <color name="md_light_surfaceContainerHighest">#FFDEE4E1</color>
+    <color name="md_light_inverseSurface">#FF2B3230</color>
+    <color name="md_light_inverseOnSurface">#FFECF2EF</color>
+    <color name="md_light_inversePrimary">#FF82D5C8</color>
+
+    <!-- Material 3 color roles, dark scheme. -->
+    <color name="md_dark_primary">#FF82D5C8</color>
+    <color name="md_dark_onPrimary">#FF003731</color>
+    <color name="md_dark_primaryContainer">#FF005048</color>
+    <color name="md_dark_onPrimaryContainer">#FFA6F2E5</color>
+    <color name="md_dark_secondary">#FFB1CCC6</color>
+    <color name="md_dark_onSecondary">#FF1C3531</color>
+    <color name="md_dark_secondaryContainer">#FF334B47</color>
+    <color name="md_dark_onSecondaryContainer">#FFCCE8E2</color>
+    <color name="md_dark_tertiary">#FFFFB951</color>
+    <color name="md_dark_onTertiary">#FF452B00</color>
+    <color name="md_dark_tertiaryContainer">#FF633F00</color>
+    <color name="md_dark_onTertiaryContainer">#FFFFDDB3</color>
+    <color name="md_dark_error">#FFFFB4AB</color>
+    <color name="md_dark_onError">#FF690005</color>
+    <color name="md_dark_errorContainer">#FF93000A</color>
+    <color name="md_dark_onErrorContainer">#FFFFDAD6</color>
+    <color name="md_dark_background">#FF0E1513</color>
+    <color name="md_dark_onBackground">#FFDEE4E1</color>
+    <color name="md_dark_surface">#FF0E1513</color>
+    <color name="md_dark_onSurface">#FFDEE4E1</color>
+    <color name="md_dark_surfaceVariant">#FF3F4947</color>
+    <color name="md_dark_onSurfaceVariant">#FFBEC9C6</color>
+    <color name="md_dark_outline">#FF899390</color>
+    <color name="md_dark_outlineVariant">#FF3F4947</color>
+    <color name="md_dark_surfaceContainerLowest">#FF090F0E</color>
+    <color name="md_dark_surfaceContainerLow">#FF171D1C</color>
+    <color name="md_dark_surfaceContainer">#FF1B2120</color>
+    <color name="md_dark_surfaceContainerHigh">#FF252B2A</color>
+    <color name="md_dark_surfaceContainerHighest">#FF303635</color>
+    <color name="md_dark_inverseSurface">#FFDEE4E1</color>
+    <color name="md_dark_inverseOnSurface">#FF2B3230</color>
+    <color name="md_dark_inversePrimary">#FF00796B</color>
 </resources>

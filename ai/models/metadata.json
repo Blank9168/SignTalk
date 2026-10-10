@@ -65,11 +65,32 @@
     "classes_total": 50
   },
   "overall_val_accuracy": 0.9657142857142857,
-  "macro_precision": 0.9709523809523809,
-  "macro_recall": 0.9520000000000001,
-  "macro_f1": 0.9511818181818181,
-  "best_val_loss": 0.806895877293178,
-  "epochs_trained": 61,
+  "macro_precision": 0.976388888888889,
+  "macro_recall": 0.9535000000000001,
+  "macro_f1": 0.9589408793820559,
+  "best_val_loss": 0.8211755995297324,
+  "epochs_trained": 42,
   "feature_space": "aspect-corrected hand landmarks (landmarks.normalize_hand with frame aspect); requires app assets/sign_lstm_iso.tflite",
-  "training": "train.py: label smoothing 0.1, wide augmentation (rotate/scale/aniso/crop/hand-drop/prefix), 889 clips incl. 250 phone clips, duplicates removed"
+  "training": "train.py: label smoothing 0.1, wide augmentation (rotate/scale/aniso/crop/hand-drop/prefix), 889 clips incl. 250 phone clips, duplicates removed; 2026-10-10 retrain adds 435 Google Drive phone clips (drive_*.npy), held-out drive test 97.7%",
+  "drive_retrain": {
+    "date": "2026-10-10",
+    "extra_clips": "435 Google Drive phone clips (46 labels; good_morning/good_afternoon excluded as duplicate videos, yes not downloaded)",
+    "split": "original data: same split as train.py (seed 42); drive clips: 30% held-out test, 1 val per class, rest train",
+    "old_model": {
+      "orig_val": 0.9657142857142857,
+      "drive_test": 0.48091603053435117,
+      "drive_all": 0.5057471264367817,
+      "drive_test_12f": 0.4580152671755725,
+      "orig_val_12f": 0.8514285714285714
+    },
+    "new_model": {
+      "orig_val": 0.9657142857142857,
+      "drive_test": 0.9770992366412213,
+      "drive_test_12f": 0.8931297709923665,
+      "orig_val_12f": 0.8514285714285714
+    },
+    "macro_f1": 0.9589408793820559,
+    "epochs": 42,
+    "previous_model_backup": "ai/models/previous/2026-10-10_before_drive_retrain"
+  }
 }

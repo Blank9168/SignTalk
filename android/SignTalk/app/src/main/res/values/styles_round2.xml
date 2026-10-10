@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Pill behind the selected bottom-navigation icon. -->
+    <style name="Widget.SignTalk.BottomNav.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">?attr/colorPrimaryContainer</item>
+    </style>
+
+    <!-- Filter chips on the dictionary screen. -->
+    <style name="Widget.SignTalk.Chip.Filter" parent="Widget.Material3.Chip.Filter">
+        <item name="chipCornerRadius">100dp</item>
+        <item name="chipMinHeight">36dp</item>
+    </style>
+
+    <!-- Example-phrase chips on the Translate screen. -->
+    <style name="Widget.SignTalk.Chip.Suggestion" parent="Widget.Material3.Chip.Suggestion">
+        <item name="chipCornerRadius">100dp</item>
+        <item name="chipIcon">@drawable/ic_record_voice</item>
+        <item name="chipIconSize">16dp</item>
+        <item name="chipIconTint">?attr/colorPrimary</item>
+        <item name="chipIconVisible">true</item>
+    </style>
+
+    <!-- Icon buttons sitting on the dark transcript bar over the camera. -->
+    <style name="SignTalk.OverlayIconButton">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:padding">9dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+        <item name="tint">@color/on_brand</item>
+    </style>
+</resources>

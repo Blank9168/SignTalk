@@ -61,6 +61,10 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
+    // Bundled emoji font so every dictionary emoji renders on older Android versions
+    // (see SignTalkApp.onCreate).
+    implementation(libs.androidx.emoji2.bundled)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

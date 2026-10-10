@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.ColorStateList
 import android.graphics.SurfaceTexture
 import android.media.MediaPlayer
 import android.net.Uri
@@ -11,6 +12,7 @@ import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.Surface
 import android.view.TextureView
@@ -32,6 +34,9 @@ import com.example.signtalk.SignTalkApp
 import com.example.signtalk.databinding.FragmentTranslateBinding
 import com.example.signtalk.domain.model.DictionaryEntry
 import com.example.signtalk.domain.translate.TranslationToken
+import com.example.signtalk.ui.common.fitVideo
+import com.google.android.material.chip.Chip
+import com.google.android.material.R as MaterialR
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -188,6 +193,16 @@ class TranslateFragment : Fragment() {
 
         binding.replayButton.setOnClickListener { viewModel.replay() }
 
+        // Example phrases: tapping one types it in, and the live matcher does the rest.
+        for (i in 0 until binding.exampleChips.childCount) {
+            val chip = binding.exampleChips.getChildAt(i) as? Chip ?: continue
+            chip.setOnClickListener {
+                val phrase = chip.text.toString()
+                binding.wordInput.setText(phrase)
+                binding.wordInput.setSelection(phrase.length)
+            }
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state -> renderState(state) }
@@ -220,6 +235,7 @@ class TranslateFragment : Fragment() {
     }
 
     private fun renderState(state: TranslateUiState) {
+        binding.idleGroup.visibility = if (state is TranslateUiState.Idle) View.VISIBLE else View.GONE
         when (state) {
             is TranslateUiState.Idle, is TranslateUiState.Translating -> {
                 binding.resultGroup.visibility = View.GONE
@@ -245,12 +261,7 @@ class TranslateFragment : Fragment() {
         binding.currentSignLabel.text = currentToken.entry.displayName
         binding.progressLabel.text = "Sign $positionInSequence of ${matchedIndices.size}"
 
-        binding.sequenceText.text = "Sequence: " + state.tokens.joinToString("  ") { token ->
-            when (token) {
-                is TranslationToken.Matched -> token.entry.displayName
-                is TranslationToken.Unmatched -> "[${token.word}]"
-            }
-        }
+        renderSequenceChips(state)
 
         val unmatchedWords = state.tokens.filterIsInstance<TranslationToken.Unmatched>().map { it.word }
         if (unmatchedWords.isNotEmpty()) {
@@ -269,6 +280,48 @@ class TranslateFragment : Fragment() {
             playingTokenIndex = state.currentIndex
             bindVideo(currentToken.entry, isLastSign)
         }
+    }
+
+    /**
+     * One chip per word/phrase: the sign playing right now is filled with the
+     * primary color, other matched signs are tonal, and words with no sign are
+     * shown in the error color.
+     */
+    private fun renderSequenceChips(state: TranslateUiState.Result) {
+        val group = binding.sequenceChips
+        group.removeAllViews()
+        state.tokens.forEachIndexed { index, token ->
+            val chip = Chip(requireContext()).apply {
+                isClickable = false
+                isCheckable = false
+                isFocusable = false
+                chipStrokeWidth = 0f
+                when (token) {
+                    is TranslationToken.Matched -> {
+                        val isCurrent = index == state.currentIndex
+                        text = token.entry.displayName
+                        chipBackgroundColor = ColorStateList.valueOf(
+                            themeColor(if (isCurrent) MaterialR.attr.colorPrimary else MaterialR.attr.colorSecondaryContainer)
+                        )
+                        setTextColor(
+                            themeColor(if (isCurrent) MaterialR.attr.colorOnPrimary else MaterialR.attr.colorOnSecondaryContainer)
+                        )
+                    }
+                    is TranslationToken.Unmatched -> {
+                        text = token.word
+                        chipBackgroundColor = ColorStateList.valueOf(themeColor(MaterialR.attr.colorErrorContainer))
+                        setTextColor(themeColor(MaterialR.attr.colorOnErrorContainer))
+                    }
+                }
+            }
+            group.addView(chip)
+        }
+    }
+
+    private fun themeColor(attr: Int): Int {
+        val typedValue = TypedValue()
+        requireContext().theme.resolveAttribute(attr, typedValue, true)
+        return typedValue.data
     }
 
     /**
@@ -351,6 +404,7 @@ class TranslateFragment : Fragment() {
                 setDataSource(requireContext(), uri)
                 isLooping = true
                 setOnPreparedListener { mp ->
+                    _binding?.signVideoView?.fitVideo(mp.videoWidth, mp.videoHeight)
                     mp.start()
                     if (autoAdvance) {
                         val clipDurationMs = if (mp.duration > 0) mp.duration.toLong() else FALLBACK_CLIP_DURATION_MS
